@@ -1,0 +1,25 @@
+#!/bin/env bash
+#we are compiling ivgift and ivgiftback
+
+mkdir bin
+
+gcc src/ivgiftback.c -o bin/ivgiftback
+success=$?
+
+
+if [ $success -ne 0 ]; then
+    printf "\nCould not compile backend\n"
+    exit
+fi
+
+gcc src/ivgift.c -o bin/ivgift -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+success=$?
+
+
+if [ $success -ne 0 ]; then
+    printf "\nCould not compile frontend\n"
+    exit
+fi
+
+printf "\nIVgift successfully compiled!\nRun 'bash ivgiftRun' or 'bin/ivgift' to begin\n"
+printf "To run just the backend, run 'bin/ivgiftback'\n"
