@@ -1,0 +1,178 @@
+00000000: 0100 0000 0100 0000 0100 0000 0000 fce9  ................
+00000010: 7b3d cc80 b015 f89a 1459 d7fb d279 58f4  {=.......Y...yX.
+00000020: 0c4e 2421 78ff 0574 53df 07da 17ae e4c8  .N$!x..tS.......
+00000030: ac96 bf56 9c77 7676 fff2 f4e9 2ecc 714e  ...V.wvv......qN
+00000040: 6063 015c 538d 09f0 5571 ed53 731f 2f0f  `c.\S...Uq.Ss./.
+00000050: 0e35 fb28 2b03 6b55 e642 960d c738 cd4a  .5.(+.kU.B...8.J
+00000060: f25d b8c5 db57 8b6d 5ecb 9ef7 4228 f2d0  .]...W.m^...B(..
+00000070: c388 3453 227d 46e6 81a2 8313 b758 34ba  ..4S"}F......X4.
+00000080: f08b 115d 9285 f0f7 2c30 c2ce 1c33 7e42  ...]....,0...3~B
+00000090: c641 21ac 8ad2 e91e bd78 a5b7 264a 4c37  .A!......x..&JL7
+000000a0: d80c bcde 3657 f992 3778 3122 c159 e4d4  ....6W..7x1".Y..
+000000b0: 983e 4182 94b1 91ff 27d0 d53c abd2 e702  .>A.....'..<....
+000000c0: 7d10 4514 6944 93d4 6731 2b74 28a7 57a8  }.E.iD..g1+t(.W.
+000000d0: ce2b 8b13 f6ab d826 d673 5697 eb33 b3c1  .+.....&.sV..3..
+000000e0: 492d 37d8 d503 2306 a5fd b0ee b3a8 b90a  I-7...#.........
+000000f0: 4599 4e47 0000 0000 0040 0000 0000 0000  E.NG.....@......
+00000100: 0000 0000 2b01 3c01 2d01 2f01 3f01 3d01  ....+.<.-./.?.=.
+00000110: de01 4c01 4501 5701 de01 4501 5601 5601  ..L.E.W...E.V.V.
+00000120: 4d01 5a01 4901 4801 ab01 ffff ffff ffff  M.Z.I.H.........
+00000130: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+00000140: ffff ffff ffff ffff ffff ffff 001c 0000  ................
+00000150: 1300 0d00 3e01 5601 4501 4801 4901 de01  ....>.V.E.H.I...
+00000160: 5d01 5301 5901 5601 de01 2b01 3c01 2d01  ].S.Y.V...+.<.-.
+00000170: 2f01 3f01 3d01 de01 5801 5301 de01 3a01  /.?.=...X.S...:.
+00000180: 5301 4f01 8801 5101 5301 5201 de01 3201  S.O...Q.S.R...2.
+00000190: 4901 4501 5601 5801 3101 5301 5001 4801  I.E.V.X.1.S.P.H.
+000001a0: 00e0 4001 4901 5601 5701 4d01 5301 5201  ..@.I.V.W.M.S.R.
+000001b0: de01 5301 5601 de01 3a01 5301 4f01 8801  ..S.V...:.S.O...
+000001c0: 5101 5301 5201 de01 3d01 5301 5901 5001  Q.S.R...=.S.Y.P.
+000001d0: 3d01 4d01 5001 5a01 4901 5601 de01 4001  =.M.P.Z.I.V...@.
+000001e0: 4901 5601 5701 4d01 5301 5201 00e0 4a01  I.V.W.M.S.R...J.
+000001f0: 5301 5601 de01 4501 de01 3601 4901 4b01  S.V...E...6.I.K.
+00000200: 4901 5201 4801 4501 5601 5d01 de01 5701  I.R.H.E.V.]...W.
+00000210: 5901 5601 5401 5601 4d01 5701 4901 ab01  Y.V.T.V.M.W.I...
+00000220: de01 2c01 4901 de01 5701 5901 5601 4901  ..,.I...W.Y.V.I.
+00000230: de01 5801 5301 00e0 5701 4501 5a01 4901  ..X.S...W.E.Z.I.
+00000240: de01 5801 4c01 4901 de01 4b01 4501 5101  ..X.L.I...K.E.Q.
+00000250: 4901 de01 5301 5201 4701 4901 de01 5d01  I...S.R.G.I...].
+00000260: 5301 5901 de01 5401 4d01 4701 4f01 de01  S.Y...T.M.G.O...
+00000270: 5901 5401 de01 2b01 3c01 2d01 2f01 3f01  Y.T...+.<.-./.?.
+00000280: 3d01 00e0 4501 5801 de01 4501 de01 3a01  =...E.X...E...:.
+00000290: 5301 4f01 8801 de01 3701 4501 5601 5801  S.O.....7.E.V.X.
+000002a0: ae01 ffff ffff ffff ffff ffff ffff ffff  ................
+000002b0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+000002c0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+000002d0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+000002e0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+000002f0: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+00000300: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+00000310: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+00000320: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+00000330: ffff ffff ffff ffff ffff ffff ffff ffff  ................
+00000340: ffff ffff ffff ffff 0000 0000 ed01 0000  ................
+00000350: 0000 0000 0e0e 0000       
+
+
+text is encoded with https://bulbapedia.bulbagarden.net/wiki/Character_encoding_(Generation_IV)
+
+000:007
+
+0100 0000 0100 0000
+
+0100 - byte 0-1, gift type.
+We only care about: Pokemon, Pokemon Egg, Item (0100, 0200, 0300)
+
+0100 - byte 4-5, gift type specific data
+Pokemon - is the receiver the OT of the gift pokemon? (0000 for yes, 0100 for no)
+Egg - same as Pokemon.
+Item - item id (from 0 to FFFF).
+
+008:f3
+
+pokemon data. this is about 236 bytes.
+an encrypted pokemon file, generated with pkhex, is 236 bytes.
+
+f4:103
+
+0000 0000 0040 0000 0000 0000 0000 0000 
+
+these bytes are consistent across the arceus event, and the darkrai distribution event, but not the member card event, though that one is all blank except for first two bytes.
+also consistent across shaymin, BUT NOT MEW.
+
+0000 0000 0000 3b00 0000 0000 0000 0000
+
+it doesnt look like a flag situation, as far as i can tell.
+because this data doesnt seem to affect the wonder card in any way possible, we can put whatever we want here for now.
+standard but boring, all 0.
+funny, write a message!
+"THX 4 IVGIFT! <3"
+
+this means the structure of a PGT file is:
+    8 byte header
+    236 byte encrypted data
+    16 bytes unknown.
+
+in file format:
+(GIFT TYPE) 0000 (GIFT SPECIFIC DATA) 0000 (ENCRYPTED POKEMON DATA / NOTHING IF ITEM) (MYSTERY BYTES / CUSTOM MESSAGE)
+totalling 260 btyes.
+
+
+
+104:14b
+
+2b01 3c01 2d01 2f01 3f01 3d01 de01 4c01
+4501 5701 de01 4501 5601 5601 4d01 5a01
+4901 4801 ab01 ffff ffff ffff ffff ffff
+ffff ffff ffff ffff ffff ffff ffff ffff
+ffff ffff ffff ffff
+
+translates to:
+"
+ARCEUS has arrived!
+"
+
+14c:153
+
+some data
+001c 0000 1300 0d00
+
+001c - 0-1 byte, sets which games can be gifted to, assuming to be like flags.
+see below
+4000000000032105 <-> D-1, P-2, Pt-3, HG-4, SS-5
+
+1300 - 4-5 byte, wonder card id, goes up to 2046 i believe.
+
+0d00 - 6-7 byte, mystery bytes. consistent across arceus, darkrai, shaymin and mew and eevee and member card its just everywhere.
+
+additionally, a consistency with the data is, for each piece of metadata such as gift type with gift data, is separation of 2 empty bytes (0000).
+0d00 could be a separation as well maybe, potentially for dynamic spacing of data that maybe never ended up happening?
+    
+honestly, try messing around with this byte. change it to different values!
+
+
+154:347
+
+translates to
+"
+Trade your Arceus to Pokemon HeartGold Version or Pokemon SoulSilver Version for a Legendary surprise! Be sure to save the game once you pick up ARCEUS at a Poke Mart.
+"
+
+e in pokemon should be the accented e.
+
+348:357
+
+some data
+
+0000 0000 ed01 0000 0000 0000
+0e0e 0000
+
+0000 - 0(-1) byte, sets pokemon redistribution count, up to 255 (unlimited)
+0000 - 2-3 byte, sets pokemon icon on left
+ed01 - 4-5 byte, sets pokemon icon in middle
+0000 - 6-7 byte, sets pokemon icon on right
+
+0e0e - 12-13 byte, sets the distribution date (needs analysis to decode)
+
+
+
+on windows, use grovyles mystery gift editor to play around with editing these files. or find a way to edit them on linux with wine.
+OK DONE
+
+what we can do with our missing data now:
+    card has a type (pokemon, egg, item etc.)
+    wonder card id    
+    if OT
+    Icons
+    redistribution count, and if unlimited
+    distribution target games
+    date received
+
+1/9/2026 update, these have all been figured out now i believe.
+all thats left now is to construct a valid PCD file and put it into PMGE.
+use PKHex to generate a pokemon's encrypted data, and the rest is up to you.
+
+NOTES ON TEXT BOXES (TITLE AND PROBABLY DESCRIPTION)
+a 2 ff block indicates a null terminator to stop reading data, i think. thats the way the hex is being edited anyway. in IVgift, always just pad out with ff rather than leave previous data.
+
+    
