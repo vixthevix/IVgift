@@ -154,6 +154,95 @@ ed01 - 4-5 byte, sets pokemon icon in middle
 
 0e0e - 12-13 byte, sets the distribution date (needs analysis to decode)
 
+0x0e0e in binary is
+0000 1110 0000 1110
+which is (in uk date format) 07/11/2009
+this is the default arceus event date
+
+year goes down to 2000
+month down to 01
+day down to 01
+
+01/01/2000 is
+0x0000! very good
+
+31/01/2000 is
+0x1e00 = 0b 0001 1110 0000 0000
+this is 30 in decimal, so im assuming days go from 0 -> 30 (which, in reality, is 1 -> 31, 
+since months begin on the 1st)
+
+01/12/2000 is
+0x4f01 = 0b 0100 1111 0000 0001
+
+31/12/2000 is
+0x6d01 = 0b 0110 1101 0000 0001
+
+it appears that the day is added onto the month.
+
+since its little endian, 01/12/2000 should be read as 0x014f, which in decimal is 335
+335 + 31 = 365
+
+it looks like the month adds on an offset from the start of the year.
+
+by that logic, the year should add on the number of days from the 01/01/2000 to 01/01/(current year)
+
+lets test this out: try my birthday, 18/04/2006
+years: 2192
+months: 90
+days: 18
+
+totalling: 2300 = 0x08FC 
+reverse it, 0xFC08
+in reality, 0xfb08, so one off.
+
+thats pretty good!
+
+to calculate, i think we just gotta hashmap it.
+day is just day - 1.
+month:
+
+list of month days.
+
+0: 0
+1: 31
+2: 28 (check year for leap day)
+3: 31
+4: 30
+5: 31
+6: 30
+7: 31
+8: 31
+9: 30
+10: 31
+11: 30
+
+sum of these values from 0 to (month - 1)
+
+year:
+a little bit more complicated because of leap years.
+keep a list of leap years between 2000 and 2099:
+
+2000,2004,2008,2012,2016,2020,2024,2028,2032,2036,2040,2044,2048,2052,2056,2060,2064,2068,2072,2076,2080,2084,2088,2092
+,2096
+
+to calculate the year addition:
+(curyear - 2000) * 365
+
+check list of leap years until greater than or equal to.
+if greater than, add index of next leap year.
+if equal to, check if month and day is greater than or equal to 29/02
+	if true, add index of next leap year.
+	else, add index of next leap year minus 1.
+
+ALTERNATIVELY, use the C standard library to do this for you :p
+since this really is meant to be a linux app, i dont mind.
+in the future, someone else can make IVgift and IVnet for windows, i dont really care right now.
+the closest support im willing to give to windows rn is WSL and linux virtual machines.
+
+by the way, the maximum date is 31/12/2099
+
+
+
 
 
 on windows, use grovyles mystery gift editor to play around with editing these files. or find a way to edit them on linux with wine.
@@ -175,4 +264,6 @@ use PKHex to generate a pokemon's encrypted data, and the rest is up to you.
 NOTES ON TEXT BOXES (TITLE AND PROBABLY DESCRIPTION)
 a 2 ff block indicates a null terminator to stop reading data, i think. thats the way the hex is being edited anyway. in IVgift, always just pad out with ff rather than leave previous data.
 
-    
+also, comparing pcd to pgt files, only ones that do not match are mew and shiny eevee.
+we will ignore this for now and ensure they match for shroomish, then send over a mystery gift shroomish to see
+if it will work.
