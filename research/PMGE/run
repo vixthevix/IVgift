@@ -1,0 +1,3 @@
+!/bin/env bash
+
+WINEPREFIX=~/.wine-pmge wine PMGE.exe

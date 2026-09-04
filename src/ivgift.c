@@ -57,6 +57,9 @@ void writeText(unsigned char* buffer, unsigned int* index, const unsigned int ma
 				else if (c == ' ') {
 					input = 0x01de;
 				}
+				else if (c == '\n') {
+					input = 0xe000; //undocumented newline character
+				}
 			}
 		}
 		else {
@@ -65,8 +68,8 @@ void writeText(unsigned char* buffer, unsigned int* index, const unsigned int ma
 		}
 
 		//once an input has been received, write it.
-		buffer[i++] = (unsigned char) (input >> 8);
 		buffer[i++] = (unsigned char) (input & 0x00ff);
+		buffer[i++] = (unsigned char) (input >> 8);
 	}
 
 	//update index
@@ -188,7 +191,7 @@ int main(void) {
 
 	//description text, maximum of 0x347 - 0x154 = 499 bytes or 500 bytes or something.
 	//half of it, 250 character limit.
-	const char* desc_msg = "Somehow, AMEMONE the Shroomish has traveled through space and time to join you on your adventure! Thank you for using IVgift! :D";
+	const char* desc_msg = "Somehow, AMEMONE the Shroomish has\ntraveled through space and time\nto join you on your adventure!\nThank you for using IVgift! :D";
 	writeText(buffer, &i, 250, desc_msg);
 	
 	printf("description written\n");
@@ -196,8 +199,8 @@ int main(void) {
 	//now we have: (distribution count) (pokemon icon left) (pokemon icon middle) (pokemon icon right) 0000 0000 (date received) 0000
 	
 	//count goes up to 255 = 0x00ff
-	buffer[i++] = 0x00;
 	buffer[i++] = 0xff;
+	buffer[i++] = 0x00;
 	
 	printf("wc count written\n");
 
@@ -244,7 +247,7 @@ int main(void) {
 	//for our shroomish event, lets use 23/03/2006 for no reason
 	date.tm_year = 2006 - 1900;
 	date.tm_mon = 3 - 1; //months are 0 indexed
-	date.tm_mday = 23; //days are 1 indexed.
+	date.tm_mday = 23 - 1; //days are 1 indexed.
 	//hour, minute, and second are 0
 	date.tm_isdst = -1; //daylight savings, let system decide.
 	

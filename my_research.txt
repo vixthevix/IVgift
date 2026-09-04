@@ -267,3 +267,16 @@ a 2 ff block indicates a null terminator to stop reading data, i think. thats th
 also, comparing pcd to pgt files, only ones that do not match are mew and shiny eevee.
 we will ignore this for now and ensure they match for shroomish, then send over a mystery gift shroomish to see
 if it will work.
+
+
+3/9/2026 update
+amemone shroomish v1 made.
+date is off by 1.
+text is wrong
+redistribution is not unlimited
+everything else is right.
+
+amemone shroomish v2 made.
+all these issues have been fixed.
+
+now make the writing consistent
