@@ -1,0 +1,7 @@
+#!/bin/env bash
+
+wget https://dl.winehq.org/wine/wine-mono/9.0.0/wine-mono-9.0.0-x86.msi
+
+WINEPREFIX=~/.wine-pmge wineboot
+
+WINEPREFIX=~/.wine-pmge wine msiexec /i wine-mono-9.0.0-x86.msi

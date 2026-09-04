@@ -1,0 +1,7 @@
+#!/bin/env bash
+wget https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.400/dotnet-sdk-10.0.400-win-x64.exe
+
+
+WINEPREFIX=~/.wine-pkhex wineboot 
+
+WINEPREFIX=~/.wine-pkhex wine dotnet-sdk-10.0.400-win-x64.exe  
