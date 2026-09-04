@@ -280,3 +280,12 @@ amemone shroomish v2 made.
 all these issues have been fixed.
 
 now make the writing consistent
+
+SIDE NOTE ON RESEARCH EXE 
+cant really git commit and push because of file sizes.
+here are the download links:
+    PMGE: https://projectpokemon.org/home/files/file/3548-mystery-gift-editor-gen-4-5/ (1.4.2 portable)
+    PKHeX: https://projectpokemon.org/home/files/file/1-pkhex/
+
+rename the executables to these.
+also set up build scripts for each with wine running
