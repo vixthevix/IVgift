@@ -10,6 +10,7 @@ Use research to make an initial amemone gift.
 
 #include <time.h>
 #include <math.h>
+#include <sys/stat.h>
 
 /*
 Translates ASCII (in the final version, Unicode) into Gen IV Encoding.
@@ -89,7 +90,7 @@ int main(void) {
 	//since pgt matches first part of pcd.
 	//pcd file is 856 bytes.
 	
-	unsigned char buffer[856] = {0};
+	unsigned char buffer[1000] = {0};
 	unsigned char* ptr = buffer;
 	unsigned int i = 0;
 
@@ -100,7 +101,7 @@ int main(void) {
 	buffer[i++] = 0x00;
 	buffer[i++] = 0x00;
 	
-	buffer[i++] = 0x00;
+	buffer[i++] = 0x01; //IVgift OT
 	buffer[i++] = 0x00;
 	
 	buffer[i++] = 0x00;
@@ -184,8 +185,9 @@ int main(void) {
 	buffer[i++] = (unsigned char) (wc_id & 0x00ff);
 	
 	//mystery byte. you can experiment here.
-	buffer[i++] = 0x0d;
-	buffer[i++] = 0x00;
+	//normally 0x0d00
+	buffer[i++] = 0xff;
+	buffer[i++] = 0xff;
 	
 	printf("wc id and mystery bytes written\n");
 
@@ -281,6 +283,28 @@ int main(void) {
 	fclose(gift_pcd);
 
 	printf("PCD made\n");
+
+	//There is one more file format to know of: .myg
+	//This is used by Nintendo Wifi Connection.
+	//We can use the code in https://github.com/AdmiralCurtiss/MysteryGiftConvert to help us here.
+	
+	//According to the repository, we can copy the 80 (0x50) bytes from our PCD, starting at 0x104.
+	//Then write out the PCD.
+
+	unsigned char myg_buffer[1500] = {0};
+	unsigned int myg_index = 0;
+	for (unsigned int j = 0x104; myg_index < 0x50; j++) {
+		myg_buffer[myg_index++] = buffer[j];
+	}
+	for (unsigned int j = 0; j < 856; j++) {
+		myg_buffer[myg_index++] = buffer[j];
+	}
+
+	FILE* gift_myg = fopen("gifts/amemone_shroomish.myg", "wb");
+	fwrite(myg_buffer, sizeof(unsigned char), myg_index, gift_myg);
+	fclose(gift_myg);
+
+	printf("MYG made\n");
 
 	return 0;
 }
