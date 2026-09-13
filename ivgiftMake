@@ -3,7 +3,7 @@
 
 mkdir bin
 
-gcc src/ivgiftback.c -o bin/ivgiftback
+gcc src/ivgiftback.c -o bin/ivgiftback -lm
 success=$?
 
 
@@ -12,7 +12,7 @@ if [ $success -ne 0 ]; then
     exit
 fi
 
-gcc src/ivgift.c -o bin/ivgift -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+gcc src/ivgift.c -o bin/ivgift -lm
 success=$?
 
 

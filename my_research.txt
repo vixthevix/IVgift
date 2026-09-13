@@ -87,6 +87,7 @@ because this data doesnt seem to affect the wonder card in any way possible, we 
 standard but boring, all 0.
 funny, write a message!
 "THX 4 IVGIFT! <3"
+I was right this doesnt do anything.
 
 this means the structure of a PGT file is:
     8 byte header

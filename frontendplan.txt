@@ -1,0 +1,9 @@
+Main menu:
+    Information
+    Create
+        From Scratch
+        From Template (pgt or pcd)
+    Edit (pgt, pcd, myg)
+
+THIS MAY GENUINELY BE A WEB APP, with cottage ofc gotta glaze cottage.
+gotta fix that globals.variable issue first though, so go do that.

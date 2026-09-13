@@ -1,5 +1,8 @@
 /*
-Use research to make an initial amemone gift.
+IVgift backend.
+Linux program for creating and editing generation IV Pokemon Mystery Gifts.
+
+Visit https://github.com/vixthevix/IVgift for more info.
 */
 
 #include <stdio.h>
