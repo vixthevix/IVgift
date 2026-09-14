@@ -1,7 +1,7 @@
 #include "../cottage/cottage.h"
 
 NewRouteFunction(createGet) {
-   return false;
+   return defaultGet(request, clientfd, extraData, "assets/web/templates/create.html");
 }
 NewRouteFunction(createPost) {
    return false;

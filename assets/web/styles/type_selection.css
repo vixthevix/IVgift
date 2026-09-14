@@ -1,0 +1,26 @@
+/* Class for button component*/
+
+.type-selection-class {
+    /* Default settings */
+    display: none;
+    /* padding: 10px; */
+    /* margin-top: 15px; */
+    /* border: 1px solid #ccc; */
+    /* background-color: #f9f9f9; */
+    /* color-scheme: light dark; */
+}
+
+/* Check the body tag if these values exist, then displayed #{id} */
+
+body:has(input[value="pokemon"]:checked) #pokemon-gift-data {
+    display: block
+}
+
+/* Egg is identical to Pokemon */
+body:has(input[value="egg"]:checked) #pokemon-gift-data {
+    display: block
+}
+
+body:has(input[value="item"]:checked) #item-gift-data {
+    display: block
+}

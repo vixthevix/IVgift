@@ -1,0 +1,19 @@
+<div>
+    <label>
+        Wonder Card Title: <br>
+        <input type="text" name="wc-title" maxlength="36" placeholder="Type here...">
+    </label>
+    <br>
+    <label>
+        Wonder Card Description: <br>
+        <!-- <input type="text" name="wc-title" size="100" maxlength="250" placeholder="Type here..."> -->
+         <textarea name="wc-description" maxlength="250" placeholder="Type here..."></textarea>
+    </label>
+    <br>
+    <!-- Character Sidebar -->
+     <div class="text-sidebar">
+        {{FOR:i,special_chars}}
+            <button class="text-sidebar-button" data-char="&#x{{VAR:i;"0020"}}">&#x{{VAR:i;"0020"}}</button>
+        {{ENDFOR}}
+     </div>
+</div>

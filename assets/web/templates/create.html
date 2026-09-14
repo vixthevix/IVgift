@@ -1,0 +1,46 @@
+<!--
+Make a separate component for each section.
+-->
+
+<html>
+    <head>
+
+        <!-- HTMX for sprite retrieving -->
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" 
+        integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
+        crossorigin="anonymous"></script>
+
+
+        <link rel="stylesheet" href="web/styles/screen_mode.css">
+        <link rel="stylesheet" href="web/styles/type_selection.css">
+        <link rel="stylesheet" href="web/styles/gen4_font_load.css">
+        <!-- Sprites taken from https://github.com/msikma/pokesprite-spritesheet -->
+        <link rel="stylesheet" href="web/styles/pokesprites/gh-markdown.css">
+        <link rel="stylesheet" href="web/styles/pokesprites/pokesprite-docs.css">
+        <link rel="stylesheet" href="web/styles/pokesprites/pokesprite-pokemon-gen8.css">
+        <link rel="stylesheet" href="web/styles/pokesprites/pokesprite-inventory.css">
+
+    </head>
+
+    <!-- LOGO -->
+    <body>
+        <!-- PGT data -->
+        {{INSERT:assets/web/components/create/gift_type.html}}
+        <br>
+        {{INSERT:assets/web/components/create/gift_type_data.html}}
+        <br>
+        {{INSERT:assets/web/components/create/pokemon_data.html}}
+        <br>
+        <!-- PCD data -->
+        {{INSERT:assets/web/components/create/wc_text.html;special_chars=global.special_chars}}
+        <br>
+        {{INSERT:assets/web/components/create/wc_icons.html}}
+        <br>
+        {{INSERT:assets/web/components/create/wc_distrib_count.html}}
+        <br>
+        {{INSERT:assets/web/components/create/wc_id.html}}
+        <br>
+        {{INSERT:assets/web/components/create/game_flags.html}}
+
+    </body>
+</html>

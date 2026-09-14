@@ -1,15 +1,24 @@
 <html>
-    <link rel="stylesheet" href="web/styles/screen_mode.css">
     <head>
+        <link rel="stylesheet" href="web/styles/screen_mode.css">
         <div style="display: flex; justify-content: center;">
             {{INSERT:assets/web/components/picture.html;img_light="img/light/logo_light.png",img_dark="img/dark/logo_dark.png",name="logo",height=400,width=400}}
         </div>
     </head>
-    Welcome to IVgift!
     <div style="position: fixed; top: 0; right: 0;">
         <form action="/" method="POST">
             <input type="hidden" name="action" value="switch_info">
             {{INSERT:assets/web/components/button.html;normal="img/info.png",pressed="img/info_pressed.png",width=100,height=100}}
         </form>
     </div>
+
+    <form action="/" method="POST" style="display: flex; justify-content: center;">
+        <input type="hidden" name="action" value="switch_new">
+        {{INSERT:assets/web/components/button.html;normal="img/new.png",pressed="img/new_pressed.png",height=150}}
+    </form>
+    <form action="/" method="POST" style="display: flex; justify-content: center;">
+        <input type="hidden" name="action" value="switch_edit">
+        {{INSERT:assets/web/components/button.html;normal="img/edit.png",pressed="img/edit_pressed.png",height=150}}
+    </form>
+
 </html>
