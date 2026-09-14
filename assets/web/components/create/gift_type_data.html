@@ -11,7 +11,7 @@
             <!-- 536 items in generation 4 -->
             Item ID:
             <input 
-            type="number" name="item_id" value="1" 
+            type="number" name="item_id" value="0" 
             min="0" max="535" step="1"
             hx-get="/api/get_sprite"
             hx-params="*"
@@ -19,8 +19,8 @@
             hx-target="#item-container">
             <!-- Also show image relating to item -->
             <div id="item-container">
-                <span class="pokesprite ball master"></span>
-                master ball
+                <span class="pokesprite none"></span>
+                none
             </div>
         </label>
     </div>

@@ -19,6 +19,9 @@ textarea {
 /* Sidebar class for selecting characters via button */
 .text-sidebar {
     margin-top: 10px;
+    width: 450px;
+    height: 150px;
+    overflow-y: auto;
 }
 
 /* Character button class for sidebar */
@@ -26,4 +29,6 @@ textarea {
     font-family: IVfont, monospace;
     font-size: 16px;
     cursor: pointer; /* Sets mouse cursor to select mode */
+    height: 25px;
+    width: 25px;
 }

@@ -1618,10 +1618,21 @@ HttpResponse sprite_api_build(siteVar* var, const int list_type) {
          items2[index], items[index]);
    }
    else if (list_type == SPRITE_API_POKEMON) {
-
+      if (index == 0) {
+         snprintf(payload, 256, 
+            "<span class=\"pokesprite none\"></span>\n"
+            "%s", 
+            pokemons[index]);
+      }
+      else {
+         snprintf(payload, 256, 
+            "<span class=\"pokesprite pokemon %s\"></span>\n"
+            "%s", 
+            pokemons[index], pokemons[index]);
+      }
    }
    else {
-
+      snprintf(payload, 256, "hello");
    }
    
    if (HttpResponseInit(&response, HTTP_1_1, HttpStatus_OK).status == COT_ERROR) {

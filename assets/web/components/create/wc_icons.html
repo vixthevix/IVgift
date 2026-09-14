@@ -1,0 +1,51 @@
+<div>
+    Select your Pokemon icons: <br>
+    <!-- 493 Pokemon in generation 4 -->
+    <label>
+        Left icon:
+        <input 
+        type="number" name="pokemon_id" value="0" 
+        min="0" max="493" step="1"
+        hx-get="/api/get_sprite"
+        hx-params="*"
+        hx-trigger="input"
+        hx-target="#pokemon-container-left">
+        <!-- Also show image relating to item -->
+        <div id="pokemon-container-left">
+            <span class="pokesprite none"></span>
+            none
+        </div>
+    </label>
+    <br>
+    <label>
+        Middle icon:
+        <input 
+        type="number" name="pokemon_id" value="0" 
+        min="0" max="493" step="1"
+        hx-get="/api/get_sprite"
+        hx-params="*"
+        hx-trigger="input"
+        hx-target="#pokemon-container-middle">
+        <!-- Also show image relating to item -->
+        <div id="pokemon-container-middle">
+            <span class="pokesprite none"></span>
+            none
+        </div>
+    </label>
+    <br>
+    <label>
+        Right icon:
+        <input 
+        type="number" name="pokemon_id" value="0" 
+        min="0" max="493" step="1"
+        hx-get="/api/get_sprite"
+        hx-params="*"
+        hx-trigger="input"
+        hx-target="#pokemon-container-right">
+        <!-- Also show image relating to item -->
+        <div id="pokemon-container-right">
+            <span class="pokesprite none"></span>
+            none
+        </div>
+    </label>
+</div>
