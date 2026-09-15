@@ -5,7 +5,7 @@ NewRouteFunction(homeGet) {
 }
 NewRouteFunction(homePost) {
    fprintf(stderr, "POST REQUEST CONTENTS:\n%s\n", request.payload);
-   stringMap* payload = payloadToMap(request.payload);
+   stringMap* payload = payloadToMap(request.payload, true);
    if (!payload || !request.payload) return false;
 
    char* action = strMapGet(payload, "action");

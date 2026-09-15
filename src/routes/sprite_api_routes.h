@@ -1669,7 +1669,10 @@ NewRouteFunction(sprite_apiGet) {
    if (!payload) return false;
    
    siteVar* item_id = siteVarCompositeAccess(payload, "item_id");
-   siteVar* pokemon_id = siteVarCompositeAccess(payload, "pokemon_id");
+   
+   siteVar* pokemon_container_left = siteVarCompositeAccess(payload, "pokemon_container_left");
+   siteVar* pokemon_container_middle = siteVarCompositeAccess(payload, "pokemon_container_middle");
+   siteVar* pokemon_container_right = siteVarCompositeAccess(payload, "pokemon_container_right");
    
    HttpResponse response = {0};
    
@@ -1677,12 +1680,20 @@ NewRouteFunction(sprite_apiGet) {
    if (item_id) {
       response = sprite_api_build(item_id, SPRITE_API_ITEM);
    }
-   else if (pokemon_id) {
-      response = sprite_api_build(pokemon_id, SPRITE_API_POKEMON);
+   else if (pokemon_container_left) {
+      response = sprite_api_build(pokemon_container_left, SPRITE_API_POKEMON);
+   }
+   else if (pokemon_container_middle) {
+      response = sprite_api_build(pokemon_container_middle, SPRITE_API_POKEMON);
+   }
+   else if (pokemon_container_right) {
+      response = sprite_api_build(pokemon_container_right, SPRITE_API_POKEMON);
    }
 
    siteVarFree(item_id);
-   siteVarFree(pokemon_id);
+   siteVarFree(pokemon_container_left);
+   siteVarFree(pokemon_container_middle);
+   siteVarFree(pokemon_container_right);
    siteVarFree(payload);
    
    bool status = sendCustom(response, clientfd);

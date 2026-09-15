@@ -1,4 +1,14 @@
+<!--Due to nature of binary file, we must encode the data first.
+    We can use base64 encoding via JS here.-->
 <div id="pokemon-gift-data" class="type-selection-class">
     Upload your encrypted Pokemon data: <br>
-    <input type="file" name="pokemon-data-input" accept=".ek4">
+    
+    <!-- Upload button -->
+    <input type="file" id="pokemon_data_upload" accept=".ek4">
+    
+    <!-- What actually gets sent -->
+    <input type="hidden" id="pokemon_data_raw" name="pokemon_data_raw">
+
+    <!-- Encoding script script -->
+    <script type="text/javascript" src="web/scripts/pokemon_data_encode.js"></script>
 </div>

@@ -4,14 +4,14 @@
     <label>
         Left icon:
         <input 
-        type="number" name="pokemon_id" value="0" 
+        type="number" name="pokemon_container_left" value="0" 
         min="0" max="493" step="1"
         hx-get="/api/get_sprite"
         hx-params="*"
         hx-trigger="input"
-        hx-target="#pokemon-container-left">
+        hx-target="#pokemon_container_left">
         <!-- Also show image relating to item -->
-        <div id="pokemon-container-left">
+        <div id="pokemon_container_left">
             <span class="pokesprite none"></span>
             none
         </div>
@@ -20,14 +20,14 @@
     <label>
         Middle icon:
         <input 
-        type="number" name="pokemon_id" value="0" 
+        type="number" name="pokemon_container_middle" value="0" 
         min="0" max="493" step="1"
         hx-get="/api/get_sprite"
         hx-params="*"
         hx-trigger="input"
-        hx-target="#pokemon-container-middle">
+        hx-target="#pokemon_container_middle">
         <!-- Also show image relating to item -->
-        <div id="pokemon-container-middle">
+        <div id="pokemon_container_middle">
             <span class="pokesprite none"></span>
             none
         </div>
@@ -36,14 +36,14 @@
     <label>
         Right icon:
         <input 
-        type="number" name="pokemon_id" value="0" 
+        type="number" name="pokemon_container_right" value="0" 
         min="0" max="493" step="1"
         hx-get="/api/get_sprite"
         hx-params="*"
         hx-trigger="input"
-        hx-target="#pokemon-container-right">
+        hx-target="#pokemon_container_right">
         <!-- Also show image relating to item -->
-        <div id="pokemon-container-right">
+        <div id="pokemon_container_right">
             <span class="pokesprite none"></span>
             none
         </div>

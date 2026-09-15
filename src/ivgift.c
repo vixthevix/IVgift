@@ -8,10 +8,13 @@ Visit https://github.com/vixthevix/IVgift for more info.
 #define COTTAGE_START
 #include "cottage/cottage.h"
 
+#include <time.h>
+
 #include "routes/home_routes.h"
 #include "routes/info_routes.h"
 #include "routes/create_routes.h"
 #include "routes/sprite_api_routes.h"
+#include "routes/generate_api_routes.h"
 
 /*
 Frontend to be made using the cottage framework.
@@ -50,11 +53,18 @@ int main(void) {
         .routePut = sprite_apiPut,
         .routeDelete = sprite_apiDelete
     };
+    RouteEntry generate_api = {
+        .routeGet = generate_apiGet,
+        .routePost = generate_apiPost,
+        .routePut = generate_apiPut,
+        .routeDelete = generate_apiDelete
+    };
 
     newRoute("/", home);
     newRoute("/info", info);
     newRoute("/create", create);
     newRoute("/api/get_sprite", sprite_api);
+    newRoute("/api/generate", generate_api);
 
     //Server setup
     const char* ADDRESS = "0.0.0.0";
@@ -439,7 +449,6 @@ int main(void) {
         "30F3",
     };
 
-
     while (true) {
         //Number of ready clients
         int ready_count = CotPollPoll(server->poll, TIMEOUT);
@@ -462,15 +471,30 @@ int main(void) {
                 }
                 debugHttpRequest(request);
 
-                //For the unicode text, we need a list of all special characters by unicode.
+                //Current date in HTML format (D-M-Y)
+                time_t t = time(NULL);
+                struct tm* tm_t = localtime(&t);
+                char curDate[50] = {0};
+                snprintf(curDate, 50, "%d-%02d-%02d", tm_t->tm_mday, tm_t->tm_mon + 1, tm_t->tm_year + 1900);
+
+
                 //Global container
                 siteVar* global = siteVarInit("global", COMPOSITE, 0, NULL);
 
-                //Actual string list
+                newResultError("main: global start.");
+
+                //Unicode string list for gen 4 font
                 siteVar* special_chars_var = siteVarInit("special_chars", STRING, 0, NULL);
                 siteVarInsertRange(&special_chars_var, special_chars, sizeof(special_chars)/sizeof(special_chars[0]));
-
                 siteVarCompositeInsert(&global, special_chars_var);
+
+                newResultError("main: unicode complete.");
+
+                //Current date
+                siteVarCompositeInsertNew(&global, "server_date", STRING, 1, &(char*){curDate});
+
+                newResultError("main: global complete.");
+
 
                 if (!handleRequest(request, active_fd, global, GLOBALROUTES)) {
                     perror("could not handle request\n");

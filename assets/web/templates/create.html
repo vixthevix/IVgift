@@ -24,7 +24,10 @@ Make a separate component for each section.
     </head>
 
     <!-- LOGO -->
-    <body>
+    <div></div>
+    <br>
+    
+    <body id="wc_editor">
         <!-- PGT data -->
         {{INSERT:assets/web/components/create/gift_type.html}}
         <br>
@@ -41,9 +44,20 @@ Make a separate component for each section.
         <br>
         {{INSERT:assets/web/components/create/wc_id.html}}
         <br>
-        {{INSERT:assets/web/components/create/wc_date.html}}
+        {{INSERT:assets/web/components/create/wc_date.html;server_date=global.server_date}}
         <br>
         {{INSERT:assets/web/components/create/game_flags.html}}
-
     </body>
+    <br>
+
+    <!-- Submission and View button -->
+    <button 
+        hx-post="/api/generate"
+        hx-include="#wc_editor"
+        hx-target="#download_view">
+    View your card
+    </button>
+
+    <!-- Download button -->
+    <div id="download_view"></div>
 </html>
