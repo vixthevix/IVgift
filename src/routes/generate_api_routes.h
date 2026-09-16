@@ -1,5 +1,8 @@
 #include "../cottage/cottage.h"
 #include "../base64/base64.h"
+#include <time.h>
+#include <wchar.h>
+#include <locale.h>
 
 uint16_t* generatePGT(stringMap* src) {
    if (!src) return NULL;
@@ -124,33 +127,33 @@ uint32_t extractUnicodeChar(uint8_t* str, uint32_t* output) {
    each one of these groups is a byte
    */
 
-   if ((str[0] & 0b1000000) == 0) { //ASCII
+   if ((str[0] & 0b10000000) == 0) { //ASCII
       bytes = 1;
-      code = str[0];
+      code = (uint32_t) (str[0]);
       goto end;
    }
-   if ((str[0] & 0b1110000) == 0b11000000) {
+   if ((str[0] & 0b11100000) == 0b11000000) {
       bytes = 2;
       code = 
-      (str[1] & 0b00111111) |
-      ((str[0] & 0b00011111) << 6);
+      ( (uint32_t) (str[1] & 0b00111111)) |
+      ( (uint32_t) (str[0] & 0b00011111) << 6);
       goto end;
    }
-   if ((str[0] & 0b1111000) == 0b11100000) {
+   if ((str[0] & 0b11110000) == 0b11100000) {
       bytes = 3;
       code = 
-      (str[2] & 0b00111111) |
-      ((str[1] & 0b00111111) << 6) |
-      ((str[0] & 0b00001111) << 12);
+      ( (uint32_t) (str[2] & 0b00111111)) |
+      ( (uint32_t) (str[1] & 0b00111111) << 6) |
+      ( (uint32_t) (str[0] & 0b00001111) << 12);
       goto end;
    }
-   if ((str[0] & 0b1111100) == 0b11110000) {
+   if ((str[0] & 0b11111000) == 0b11110000) {
       bytes = 4;
       code = 
-      (str[3] & 0b00111111) |
-      ((str[2] & 0b00111111) << 6) |
-      ((str[1] & 0b00111111) << 12) |
-      ((str[0] & 0b00000111) << 18);
+      ( (uint32_t) (str[3] & 0b00111111)) |
+      ( (uint32_t) (str[2] & 0b00111111) << 6) |
+      ( (uint32_t) (str[1] & 0b00111111) << 12) |
+      ( (uint32_t) (str[0] & 0b00000111) << 18);
       goto end;
    }
 
@@ -166,7 +169,7 @@ uint32_t extractUnicodeChar(uint8_t* str, uint32_t* output) {
 void writeWonderCardText(uint16_t* buffer, unsigned int* index, const uint32_t max_characters, const char* msg) {
    if (!buffer || !index) return;
 
-   if (!msg) {
+   if (!msg || strlen(msg) == 0) {
       //an empty message can mean "fill with padding"
       memset(&buffer[*index], 0xff, max_characters * sizeof(uint16_t));
       *index += max_characters;
@@ -177,13 +180,19 @@ void writeWonderCardText(uint16_t* buffer, unsigned int* index, const uint32_t m
    uint8_t* umsg = (uint8_t*) msg;
    uint32_t unicode = 0;
 
-   for (uint32_t j = 0; umsg != NULL || j < max_characters; j++) {
-      if (umsg == NULL) { //null terminator padding.
+   newResultError("writeWonderCardText: setup done.");
+   setlocale(LC_ALL, "en_US.UTF-8");
+
+   for (uint32_t j = 0; *umsg != 0 || j < max_characters; j++) {
+      if (*umsg == 0) { //null terminator padding.
+         fprintf(stderr, "writeWonderCardText: umsg null, j: %u\n", j);
          buffer[i++] = 0xffff;
          continue;
       }
       //Grab the next unicode character.
-      umsg += extractUnicodeChar(umsg, &unicode);
+      uint32_t bytes = extractUnicodeChar(umsg, &unicode); 
+      umsg += bytes;
+      fprintf(stderr, "Current unicode: %u, j: %u, bytes: %u\n", unicode, j, bytes);
 
       uint16_t input = 0;
       if ('0' <= unicode && unicode <= '9') { //numeric
@@ -235,26 +244,23 @@ void writeWonderCardText(uint16_t* buffer, unsigned int* index, const uint32_t m
             
             //Unicode punctuation
 
-            case '~' : input = 0x0000; break;
-            case ' ' : input = 0x0000; break; // ¡ symbol
-            case ' ' : input = 0x0000; break; // ¢ symbol
-            case ' ' : input = 0x0000; break; // £ symbol
-            case ';' : input = 0x0000; break; // pokedollar symbol
-            case ';' : input = 0x0000; break; // yen symbol
-            case ';' : input = 0x0000; break; // copyright symbol
-            case ';' : input = 0x0000; break; //…
-            case ';' : input = 0x0000; break;
-            case ';' : input = 0x0000; break;
-            case ';' : input = 0x0000; break;
-            case ';' : input = 0x0000; break;
-            case ';' : input = 0x0000; break;
-            case ';' : input = 0x0000; break;
+            // case '~' : input = 0x0000; break;
+            // case ' ' : input = 0x0000; break; // ¡ symbol
+            // case ' ' : input = 0x0000; break; // ¢ symbol
+            // case ' ' : input = 0x0000; break; // £ symbol
+            // case ';' : input = 0x0000; break; // pokedollar symbol
+            // case ';' : input = 0x0000; break; // yen symbol
+            // case ';' : input = 0x0000; break; // copyright symbol
+            // case ';' : input = 0x0000; break; //…
+            // case ';' : input = 0x0000; break;
+            // case ';' : input = 0x0000; break;
+            // case ';' : input = 0x0000; break;
+            // case ';' : input = 0x0000; break;
+            // case ';' : input = 0x0000; break;
+            // case ';' : input = 0x0000; break;
             
 
             case '\n': input = 0xe000; break; //undocumented on bulbapedia
-            case ''  :  break;
-            case ''  :  break;
-            case ''  :  break;
 
             //default error as '?'
             case '?' :
@@ -280,20 +286,26 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    bool pgt_available = !!(pgt);
    if (!pgt_available) {
       pgt = generatePGT(src);
+      if (!pgt) return NULL;
    }
    //A PGT file is 260 bytes.
    index = 260 >> 1;
    memcpy(buffer, pgt, index << 1);
    if (!pgt_available && pgt) free(pgt);
 
+   fprintf(stderr, "WROTE PGT FILE TO PCD\n\n");
+
    //Text box values
    const uint32_t 
    title_limit = 36,
    desc_limit  = 250;
 
-   //Title
-   char* title_input = strMapGet(src, "title_input"); 
+   //Title - CURRENTLY BUGGED SEG FAULT
+   char* title_input = strMapGet(src, "title_input");
+   if (title_input) fprintf(stderr, "TITLE INPUT GOT: %s\n\n", title_input);
    writeWonderCardText(buffer, &index, title_limit, title_input);
+
+   fprintf(stderr, "PCD TITLE\n\n");
 
    //Game flags
    char* flag_d = strMapGet(src, "flag_d");
@@ -316,6 +328,8 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    if (flag_ss) buffer[index] |= SS;
    index++;
 
+   fprintf(stderr, "PCD FLAGS\n\n");
+
    index ++; //0x0000
 
    //Wonder card id
@@ -324,6 +338,8 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    if (wc_id) wc_id_num = atoi(wc_id);
    buffer[index++] = wc_id_num;
 
+   fprintf(stderr, "PCD WC ID\n\n");
+
    //Mystery byte, can probably be whatever you want.
    buffer[index++] = 0x0d00;
 
@@ -331,11 +347,18 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    char* desc_input = strMapGet(src, "desc_input");
    writeWonderCardText(buffer, &index, desc_limit, desc_input);
 
+   fprintf(stderr, "PCD DESC\n\n");
+
    //Distribution count
+   //Check if unlimited
    uint16_t distrib_count_num = 0;
    char* distrib_count = strMapGet(src, "distrib_count");
-   if (distrib_count) distrib_count_num = atoi(distrib_count);
+   char* distrib_infinite = strMapGet(src, "distrib_infinite");
+   if (distrib_infinite) distrib_count_num = 255;
+   else if (distrib_count) distrib_count_num = atoi(distrib_count);
    buffer[index++] = distrib_count_num;
+
+   fprintf(stderr, "PCD DISTRIB COUNT\n\n");
 
    //Pokemon icons
    uint16_t icon_left = 0;
@@ -353,16 +376,135 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    if (pokemon_container_right) icon_right = atoi(pokemon_container_right);
    buffer[index++] = icon_right;
 
+   fprintf(stderr, "PCD ICONS\n\n");
+
    index += 2; //0x0000 * 2
 
    //Date
+   char* wc_date = strMapGet(src, "wc_date");
+   char* current_date = strMapGet(src, "current_date");
 
+   //Time constants
+   const uint32_t
+   system_year_diff = 1900,
+   system_month_diff = 1,
+   system_day_diff = 0;
 
-   return NULL;
+   //Time storage
+	struct tm epoch; //beginning of time for the date
+	struct tm date; //out current date for the event.
+	memset(&epoch, 0, sizeof(struct tm));
+	memset(&date, 0, sizeof(struct tm));
+
+   //Set the epoch (on the DS, 01/01/2000)
+	epoch.tm_year = 2000 - system_year_diff;
+	epoch.tm_mon  = 1    - system_month_diff;
+	epoch.tm_mday = 1    - system_day_diff;
+	//hour, minute, and second are 0
+	epoch.tm_isdst = -1; //daylight savings, let system decide.
+
+   //Check if we use the current date
+   if (current_date) {
+      time_t t = time(NULL);
+      date = *localtime(&t);
+   }
+   else if (wc_date) {
+      //In the format YEAR-MONTH-DAY
+      uint32_t year = 0, month = 0, day = 0;
+      char* date_dash = NULL;
+      char date_buffer[100] = {0};
+      uint32_t date_pointer = 0, date_stride = 0;
+
+      //Year
+      date_dash = strstr(wc_date, "-");
+      if (date_dash) {
+         date_stride = 4;
+         memcpy(date_buffer, wc_date, date_stride);
+         wc_date += date_stride + 1;
+         year = atoi(date_buffer);
+         memset(date_buffer, 0, 100);
+      }
+      //Month
+      date_dash = strstr(wc_date, "-");
+      if (date_dash) {
+         date_stride = 2;
+         memcpy(date_buffer, wc_date, date_stride);
+         wc_date += date_stride + 1;
+         month = atoi(date_buffer);
+         memset(date_buffer, 0, 100);
+      }
+      //Day - drain the buffer
+      strcpy(date_buffer, wc_date);
+      day = atoi(date_buffer);
+      memset(date_buffer, 0, 100);
+
+      //we can now fill out our tm struct
+      date.tm_year = year  - system_year_diff;
+      date.tm_mon  = month - system_month_diff;
+      date.tm_mday = day   - system_day_diff;
+      date.tm_isdst = -1; //daylight savings, system choice
+   }
+   else return NULL; //probably invalid
+
+   //date struct set up, so get the difference.
+   time_t epoch_t = mktime(&epoch);
+   time_t date_t = mktime(&date);
+   double dt = difftime(date_t, epoch_t);
+	//add half a day in seconds to round safely and to protect against DST,
+	//and divide by seconds in a day
+	uint16_t days = (uint16_t) round((dt + 43200) / 86400);
+
+   buffer[index++] = days;
+
+   fprintf(stderr, "PCD DAYS\n\n");
+
+   index++; //0x0000
+
+   buffer[index] = 0; //null terminate
+   //with that, we are good to go.
+   uint16_t* return_buffer = (uint16_t*) calloc(index + 1, sizeof(uint16_t));
+   if (!return_buffer) return NULL; //allocation error
+
+   memcpy(return_buffer, buffer, (index + 1) * sizeof(uint16_t));
+
+   return return_buffer;
 }
 
 uint16_t* generateMYG(stringMap* src, uint16_t* pcd) {
-   return NULL;
+   if (!src) return NULL;
+
+   uint16_t buffer[1000] = {0};
+   unsigned int index = 0;
+   
+   //Read in the pcd
+   bool pcd_available = !!(pcd);
+   if (!pcd_available) {
+      pcd = generatePCD(src, NULL);
+      if (!pcd) return NULL;
+   }
+   //A PCD file is 856 bytes.
+   index = 856 >> 1;
+   memcpy(buffer, pcd, index << 1);
+   if (!pcd_available && pcd) free(pcd);
+   
+   //MYG just copies bytes 0x0104 through 0x0154 to the header.
+	uint16_t myg_buffer[1500] = {0};
+	unsigned int myg_index = 0;
+	for (unsigned int j = 0x104; myg_index < (0x50 >> 1); j++) {
+		myg_buffer[myg_index++] = buffer[j];
+	}
+	for (unsigned int j = 0; j < index; j++) {
+		myg_buffer[myg_index++] = buffer[j];
+	}
+
+   myg_buffer[myg_index] = 0; //null terminate
+   //with that, we are good to go.
+   uint16_t* return_buffer = (uint16_t*) calloc(myg_index + 1, sizeof(uint16_t));
+   if (!return_buffer) return NULL; //allocation error
+
+   memcpy(return_buffer, myg_buffer, (myg_index + 1) * sizeof(uint16_t));
+
+   return return_buffer;
 }
 
 NewRouteFunction(generate_apiGet) {
@@ -388,6 +530,10 @@ NewRouteFunction(generate_apiPost) {
    //With our payload, we can now build our files.
    uint16_t* pgt = generatePGT(payload);
    if (pgt) fprintf(stderr, "PGT SUCCESS\n\n");
+   uint16_t* pcd = generatePCD(payload, pgt);
+   if (pcd) fprintf(stderr, "PCD SUCCESS\n\n");
+   uint16_t* myg = generateMYG(payload, pcd);
+   if (myg) fprintf(stderr, "MYG SUCCESS\n\n");
 
 
    return sendRedirect("/", clientfd);
