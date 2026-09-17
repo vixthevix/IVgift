@@ -3,6 +3,9 @@
 #include <time.h>
 #include <wchar.h>
 #include <locale.h>
+#include <zip.h>
+
+#define SwapEndian(x) (x >> 8) | (x << 8)
 
 uint16_t* generatePGT(stringMap* src) {
    if (!src) return NULL;
@@ -17,13 +20,13 @@ uint16_t* generatePGT(stringMap* src) {
    
    bool isItem = false;
    if (strcmp(type, "pokemon") == 0) {
-      buffer[index++] = 0x0100;
+      buffer[index++] = 0x0001;
    }
    else if (strcmp(type, "egg") == 0) {
-      buffer[index++] = 0x0200;
+      buffer[index++] = 0x0002;
    }
    else if (strcmp(type, "item") == 0) {
-      buffer[index++] = 0x0300;
+      buffer[index++] = 0x0003;
       isItem = true;
    }
    else return NULL; //Must be one of these 3
@@ -47,7 +50,7 @@ uint16_t* generatePGT(stringMap* src) {
          //If set, means yes, so remains at 0x0000
          index++;
       }
-      else buffer[index++] = 0x0100;
+      else buffer[index++] = 0x0001;
    }
 
    index++; //0x0000
@@ -79,9 +82,9 @@ uint16_t* generatePGT(stringMap* src) {
 
       //with this, we can copy
       for (int j = 0; j < 236;) {
-         uint16_t bin_high = (uint16_t)bin[j++];
          uint16_t bin_low = (uint16_t)bin[j++];
-         uint16_t bin_short = (bin_high << 8) | (bin_low);
+         uint16_t bin_high = (uint16_t)bin[j++];
+         uint16_t bin_short = (bin_high << 8) | (bin_low & 0x00ff);
 
          buffer[index++] = bin_short;
       }
@@ -94,9 +97,9 @@ uint16_t* generatePGT(stringMap* src) {
    //special IVgift message
    const char* thank_you = "THX 4 IVGIFT! <3";
    for (int j = 0; j < strlen(thank_you);) {
-         uint16_t high = (uint16_t)thank_you[j++];
          uint16_t low = (uint16_t)thank_you[j++];
-         uint16_t thx = (high << 8) | (low);
+         uint16_t high = (uint16_t)thank_you[j++];
+         uint16_t thx = (high << 8) | (low & 0x00ff);
 
          buffer[index++] = thx;
    }
@@ -184,7 +187,7 @@ void writeWonderCardText(uint16_t* buffer, unsigned int* index, const uint32_t m
    setlocale(LC_ALL, "en_US.UTF-8");
 
    for (uint32_t j = 0; *umsg != 0 || j < max_characters; j++) {
-      if (*umsg == 0) { //null terminator padding.
+      if (*umsg == 0) { //end of umsg, so null terminator padding.
          fprintf(stderr, "writeWonderCardText: umsg null, j: %u\n", j);
          buffer[i++] = 0xffff;
          continue;
@@ -321,12 +324,15 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
 	HG = 1 << 15,
 	SS = 1 << 0;
 
+   //G0000000 000PPD0S => 000PPD0S G0000000 
+
    if (flag_d)  buffer[index] |= DIAMOND;
    if (flag_p)  buffer[index] |= PEARL;
    if (flag_pt) buffer[index] |= PLATINUM;
    if (flag_hg) buffer[index] |= HG;
    if (flag_ss) buffer[index] |= SS;
-   index++;
+
+   buffer[index++] = SwapEndian(buffer[index]);
 
    fprintf(stderr, "PCD FLAGS\n\n");
 
@@ -336,12 +342,16 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    uint16_t wc_id_num = 0;
    char* wc_id = strMapGet(src, "wc_id");
    if (wc_id) wc_id_num = atoi(wc_id);
+
+   wc_id_num = SwapEndian(wc_id_num);
+
    buffer[index++] = wc_id_num;
 
    fprintf(stderr, "PCD WC ID\n\n");
 
    //Mystery byte, can probably be whatever you want.
-   buffer[index++] = 0x0d00;
+   // buffer[index++] = 0x0d00;
+   buffer[index++] = 0xffff;
 
    //Description text
    char* desc_input = strMapGet(src, "desc_input");
@@ -388,7 +398,7 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    const uint32_t
    system_year_diff = 1900,
    system_month_diff = 1,
-   system_day_diff = 0;
+   system_day_diff = 1;
 
    //Time storage
 	struct tm epoch; //beginning of time for the date
@@ -399,7 +409,7 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    //Set the epoch (on the DS, 01/01/2000)
 	epoch.tm_year = 2000 - system_year_diff;
 	epoch.tm_mon  = 1    - system_month_diff;
-	epoch.tm_mday = 1    - system_day_diff;
+	epoch.tm_mday = 2    - system_day_diff;
 	//hour, minute, and second are 0
 	epoch.tm_isdst = -1; //daylight savings, let system decide.
 
@@ -490,7 +500,7 @@ uint16_t* generateMYG(stringMap* src, uint16_t* pcd) {
    //MYG just copies bytes 0x0104 through 0x0154 to the header.
 	uint16_t myg_buffer[1500] = {0};
 	unsigned int myg_index = 0;
-	for (unsigned int j = 0x104; myg_index < (0x50 >> 1); j++) {
+	for (unsigned int j = (0x104 >> 1); myg_index < (0x50 >> 1); j++) {
 		myg_buffer[myg_index++] = buffer[j];
 	}
 	for (unsigned int j = 0; j < index; j++) {
@@ -528,6 +538,11 @@ NewRouteFunction(generate_apiPost) {
    fprintf(stderr, "\n");
 
    //With our payload, we can now build our files.
+   const uint32_t
+   pgt_size = 260,
+   pcd_size = 856,
+   myg_size = 936;
+
    uint16_t* pgt = generatePGT(payload);
    if (pgt) fprintf(stderr, "PGT SUCCESS\n\n");
    uint16_t* pcd = generatePCD(payload, pgt);
@@ -535,8 +550,172 @@ NewRouteFunction(generate_apiPost) {
    uint16_t* myg = generateMYG(payload, pcd);
    if (myg) fprintf(stderr, "MYG SUCCESS\n\n");
 
+   //With our buffers, we write them to a zip file.
+   //We can do this with libzip (zip.h)
 
-   return sendRedirect("/", clientfd);
+   //Set up error fixture
+   zip_error_t zip_err;
+   zip_error_init(&zip_err);
+
+   int zip_status = 0;
+   
+   //Holds the actual data of our zip file we will create.
+
+   //const uint16_t wc_zip_source_size = 2048;
+   //uint8_t* wc_zip_source_full = (uint8_t*) calloc(wc_zip_source_size, 1);
+
+   zip_source_t* wc_source = zip_source_buffer_create(NULL, 0, 0, &zip_err);
+   if (!wc_source) {
+      fprintf(stderr, "WC_SOURCE FAILED: %s\n", zip_error_strerror(&zip_err));
+   }
+
+   //By default, libzip will free data automatically for us at times.
+   //To prevent this with our source, we keep it
+   zip_source_keep(wc_source);
+
+   //File interface for the zip.
+   //TRUNCATE means "even if this already exists, handle it like its brand new and empty".
+   zip_t* wc_zip = zip_open_from_source(wc_source, ZIP_TRUNCATE, &zip_err);
+   if (!wc_zip) {
+      fprintf(stderr, "WC_ZIP FAILED: %s\n", zip_error_strerror(&zip_err));
+   }
+
+
+   //Convert files into zip sources, and attach them to the main zip source.
+   zip_source_t* pgt_source = zip_source_buffer(wc_zip, pgt, pgt_size, 0);
+   if (!pgt_source) {
+      fprintf(stderr, "PGT_SOURCE FAILED: %s\n", zip_strerror(wc_zip));
+   }
+   
+   zip_source_t* pcd_source = zip_source_buffer(wc_zip, pcd, pcd_size, 0);
+   if (!pcd_source) {
+      fprintf(stderr, "PCD_SOURCE FAILED: %s\n", zip_strerror(wc_zip));
+   }
+   
+   zip_source_t* myg_source = zip_source_buffer(wc_zip, myg, myg_size, 0);
+   if (!myg_source) {
+      fprintf(stderr, "MYG_SOURCE FAILED: %s\n", zip_strerror(wc_zip));
+   }
+
+
+   //Add our files to the file interface
+   //Add HTML for writing a name for these files. otherwise, use 'IVgift'.
+   
+   zip_status = zip_file_add(wc_zip, "IVgift.pgt", pgt_source, ZIP_FL_OVERWRITE);
+   if (zip_status < 0) {
+      fprintf(stderr, "PGT_ADD FAILED: %s\n", zip_strerror(wc_zip));
+   }
+   
+   zip_status = zip_file_add(wc_zip, "IVgift.pcd", pcd_source, ZIP_FL_OVERWRITE);
+   if (zip_status < 0) {
+      fprintf(stderr, "PCD_ADD FAILED: %s\n", zip_strerror(wc_zip));
+   }
+
+   zip_status = zip_file_add(wc_zip, "IVgift.myg", myg_source, ZIP_FL_OVERWRITE);
+   if (zip_status < 0) {
+      fprintf(stderr, "MYG_ADD FAILED: %s\n", zip_strerror(wc_zip));
+   }
+
+   //Done with the interface, so close it
+   zip_status = zip_close(wc_zip);
+   if (zip_status < 0) {
+      fprintf(stderr, "ZIP_CLOSE FAILED: %s\n", zip_strerror(wc_zip));
+   }
+
+   //With our total source, we read it into a buffer and get the size.
+   zip_stat_t wc_stats = {0};
+   zip_status = zip_source_stat(wc_source, &wc_stats); //Stores stats about the zip, including size.
+   if (zip_status < 0) {
+      fprintf(stderr, "ZIP_SOURCE_STAT FAILED: %s\n", "idk");
+   }
+   
+   size_t wc_zip_size = wc_stats.size;
+   fprintf(stderr, "WC_ZIP_SIZE: %zu\n\n", wc_zip_size);
+
+   //returns -1 on failure
+   zip_status =  zip_source_open(wc_source);
+   if (zip_status < 0) {
+      fprintf(stderr, "ZIP_SOURCE_OPEN FAILED: %s\n", "idk");
+   }
+
+   if (zip_source_seek(wc_source, 0, SEEK_SET) < 0) {
+      fprintf(stderr, "ZIP_SOURCE_SEEK FAILED\n");
+   }
+   
+   // //returns -1 on error, and 0 on finish read
+
+   uint8_t* wc_zip_data = (uint8_t*) malloc(wc_zip_size);
+
+   int64_t zip_bytes = 0, zip_index = 0; 
+   while (zip_index <= (int64_t)wc_zip_size) {
+      zip_bytes = zip_source_read(wc_source, &wc_zip_data[zip_index], wc_zip_size - zip_index);
+      if (zip_bytes < 0) {
+         fprintf(stderr, "ZIP_SOURCE_READ FAILED: %s\n", "idk");
+         break;
+      }
+
+      zip_index += zip_bytes;
+      fprintf(stderr, "ZIP_SOURCE_READ INDEX: %li\n", zip_index);
+      if (zip_bytes == 0) {
+         fprintf(stderr, "ZIP_SOURCE_READ SUCCESS\n");
+         break;
+      }
+   }
+   
+   // zip_status = zip_source_read(wc_source, wc_zip_data, wc_zip_size);
+   // if (zip_status < 0) {
+   //    fprintf(stderr, "ZIP_SOURCE_READ FAILED: %s\n", "idk");
+   // }
+
+   zip_status = zip_source_close(wc_source);
+   if (zip_status < 0) {
+      fprintf(stderr, "ZIP_SOURCE_CLOSE FAILED: %s\n", "idk");
+   }
+
+   //done with source so free it.
+   zip_source_free(wc_source);
+
+   //done with error fixture
+   zip_error_fini(&zip_err);
+
+
+   //wc_zip_data has our zip file now.
+   //encode it in base64, and send it off.
+   char* wc_data_encoded = base64_encode_binary(wc_zip_data, wc_zip_size);
+
+   fprintf(stderr, "ENCODED WC:\n\n%s\n\n", wc_data_encoded);
+
+   HttpResponse response = {0};
+   if (HttpResponseInit(&response, HTTP_1_1, HttpStatus_OK).status == COT_ERROR) {
+      return sendRedirect("/", clientfd);
+   }
+
+   //Build the HTML for the download button to send.
+
+   dataVector vector = dataVectorInit(128);
+   dataVectorPushString(&vector, "<div> Card sent </div><br>\n");
+   dataVectorPushString(&vector, "<a href=\"data:application/zip;base64,");
+   dataVectorPushString(&vector, wc_data_encoded);
+   dataVectorPushString(&vector, "\" download=\"ivgift_wondercard.zip\">\n");
+   dataVectorPushString(&vector, "<button type=\"button\">Download Card</button>\n");
+   dataVectorPushString(&vector, "</a>");
+
+   
+   HttpResponseAddPayload(&response, vector.data, strlen(vector.data));
+   char payload_size[100] = {0};
+   sprintf(payload_size, "%zu", response.payload_size);
+   
+   HttpResponseAddOption(&response, "Content-Length", payload_size);
+   HttpResponseAddOption(&response, "Content-Type", "text/plaintext");
+   HttpResponseAddOption(&response, "Connection", "close");
+
+   bool status = sendCustom(response, clientfd);
+   HttpResponseFree(response);
+   if (vector.data) free(vector.data);
+
+
+
+   return status;
    //return false;
 }
 NewRouteFunction(generate_apiPut) {

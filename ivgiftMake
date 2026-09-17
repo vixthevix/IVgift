@@ -12,7 +12,7 @@ if [ $success -ne 0 ]; then
     exit
 fi
 
-gcc src/ivgift.c -o bin/ivgift -lm
+gcc src/ivgift.c -o bin/ivgift -lm -lzip
 success=$?
 
 

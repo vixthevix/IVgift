@@ -17,6 +17,7 @@ Visit https://github.com/vixthevix/IVnet for more info.
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 char base46_map[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
                      'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
@@ -84,6 +85,66 @@ char* base64_decode(char* cipher) {
     return plain;
 }
 
+char* base64_encode_binary(uint8_t* bin, size_t size) {
+
+    char counts = 0;
+    uint8_t buffer[3];
+    char* cipher = (char*) malloc(size * 4 / 3 + 4);
+    int i = 0, c = 0;
+
+    for(i = 0; i < size; i++) {
+        buffer[counts++] = bin[i];
+        if(counts == 3) {
+            cipher[c++] = base46_map[buffer[0] >> 2];
+            cipher[c++] = base46_map[((buffer[0] & 0x03) << 4) + (buffer[1] >> 4)];
+            cipher[c++] = base46_map[((buffer[1] & 0x0f) << 2) + (buffer[2] >> 6)];
+            cipher[c++] = base46_map[buffer[2] & 0x3f];
+            counts = 0;
+        }
+    }
+
+    if(counts > 0) {
+        cipher[c++] = base46_map[buffer[0] >> 2];
+        if(counts == 1) {
+            cipher[c++] = base46_map[(buffer[0] & 0x03) << 4];
+            cipher[c++] = '=';
+        } else {                      // if counts == 2
+            cipher[c++] = base46_map[((buffer[0] & 0x03) << 4) + (buffer[1] >> 4)];
+            cipher[c++] = base46_map[(buffer[1] & 0x0f) << 2];
+        }
+        cipher[c++] = '=';
+    }
+
+    cipher[c] = '\0';   /* string padding character */
+    return cipher;
+}
+
+//Don't think this is needed.
+char* base64_decode_binary(char* cipher, size_t size) {
+
+    char counts = 0;
+    char buffer[4];
+    char* plain = (char*) malloc(size * 3 / 4);
+    int i = 0, p = 0;
+
+    for(i = 0; i < size; i++) {
+        char k;
+        for(k = 0 ; k < 64 && base46_map[k] != cipher[i]; k++);
+        buffer[counts++] = k;
+        if(counts == 4) {
+            plain[p++] = (buffer[0] << 2) + (buffer[1] >> 4);
+            if(buffer[2] != 64)
+                plain[p++] = (buffer[1] << 4) + (buffer[2] >> 2);
+            if(buffer[3] != 64)
+                plain[p++] = (buffer[2] << 6) + buffer[3];
+            counts = 0;
+        }
+    }
+
+    //No padding
+    return plain;
+}
+
 size_t base64_decode_size(char* cipher) {
 
     char counts = 0;
@@ -110,6 +171,30 @@ size_t base64_decode_size(char* cipher) {
 
     //plain[p] = '\0';    /* string padding character */
     return p;
+}
+
+size_t base64_encode_size(char* plain) {
+
+    char counts = 0;
+    char buffer[3];
+    //char* cipher = (char*) malloc(strlen(plain) * 4 / 3 + 4);
+    int i = 0; 
+    size_t c = 0;
+
+    for(i = 0; plain[i] != '\0'; i++) {
+        buffer[counts++] = plain[i];
+        if(counts == 3) {
+            c += 4;
+            counts = 0;
+        }
+    }
+
+    if(counts > 0) {
+        c += 5;
+    }
+
+    
+    return c;
 }
 
 
