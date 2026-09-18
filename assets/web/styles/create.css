@@ -1,0 +1,84 @@
+/* Custom colour definitions */
+:root {
+    --wc-text-dark:  #585850;
+    --wc-text-light: #f8f8f8;
+    --wc-text-bg:    #a8b8b8;
+}
+
+body {
+    margin: 0px;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.create-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    /* overflow: hidden; */
+}
+
+
+/* Class for the editing options */
+.create-editor {
+    flex: 1;
+    /* margin-top: 10px; */
+    height: 100%;
+    overflow-y: auto;
+    /* margin-top: 30px;
+    margin-bottom: 30px; */
+}
+
+.create-view {
+    flex: 1;
+    /* background-color: gray; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.create-view-wrapper {
+    position: relative; 
+    
+    /* Lock to the exact native resolution of a Nintendo DS top screen */
+    /* width: 512px;  */
+    width: 248px;
+    height: 320px; 
+    
+    /* Scale the ENTIRE card, text, and icons together by a perfect integer */
+    transform: scale(2); /* Change to 3 if you want it even bigger */
+    transform-origin: center; /* Keeps it centered in your flexbox layout */
+    
+    /* Forces crisp pixels for everything inside */
+    image-rendering: pixelated;
+}
+
+.create-view-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.create-view-text {
+    position: absolute;
+    z-index: 100;
+    font-family: IVfont, monospace;
+    font-size: 11px; 
+    color: var(--wc-text-dark); 
+    text-shadow: 1px 1px 0px var(--wc-text-bg);
+}
+
+.create-view-icon {
+    position: absolute;
+    z-index: 100;
+}
+
+.create-button {
+    position: fixed;
+    top: 0;
+    right: 0;
+}

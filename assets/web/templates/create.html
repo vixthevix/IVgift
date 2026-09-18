@@ -14,6 +14,7 @@ Make a separate component for each section.
         <link rel="stylesheet" href="web/styles/screen_mode.css">
         <link rel="stylesheet" href="web/styles/type_selection.css">
         <link rel="stylesheet" href="web/styles/gen4_font_load.css">
+        <link rel="stylesheet" href="web/styles/create.css">
         
         <!-- Sprites taken from https://github.com/msikma/pokesprite-spritesheet -->
         <link rel="stylesheet" href="web/styles/pokesprites/gh-markdown.css">
@@ -25,39 +26,119 @@ Make a separate component for each section.
 
     <!-- LOGO -->
     <div></div>
-    <br>
     
-    <body id="wc_editor">
-        <!-- PGT data -->
-        {{INSERT:assets/web/components/create/gift_type.html}}
-        <br>
-        {{INSERT:assets/web/components/create/gift_type_data.html}}
-        <br>
-        {{INSERT:assets/web/components/create/pokemon_data.html}}
-        <br>
-        <!-- PCD data -->
-        {{INSERT:assets/web/components/create/wc_text.html;special_chars=global.special_chars}}
-        <br>
-        {{INSERT:assets/web/components/create/wc_icons.html}}
-        <br>
-        {{INSERT:assets/web/components/create/wc_distrib_count.html}}
-        <br>
-        {{INSERT:assets/web/components/create/wc_id.html}}
-        <br>
-        {{INSERT:assets/web/components/create/wc_date.html;server_date=global.server_date}}
-        <br>
-        {{INSERT:assets/web/components/create/game_flags.html}}
+    <body>
+        <div class="create-layout">
+            <div id="wc_editor" class="create-editor">
+                <!-- PGT data -->
+                {{INSERT:assets/web/components/create/gift_type.html}}
+                <br>
+                {{INSERT:assets/web/components/create/gift_type_data.html}}
+                <br>
+                {{INSERT:assets/web/components/create/pokemon_data.html}}
+                <br>
+                <!-- PCD data -->
+                {{INSERT:assets/web/components/create/wc_text.html;special_chars=global.special_chars}}
+                <br>
+                {{INSERT:assets/web/components/create/wc_icons.html}}
+                <br>
+                {{INSERT:assets/web/components/create/wc_distrib_count.html}}
+                <br>
+                {{INSERT:assets/web/components/create/wc_id.html}}
+                <br>
+                {{INSERT:assets/web/components/create/wc_date.html;server_date=global.server_date}}
+                <br>
+                {{INSERT:assets/web/components/create/game_flags.html}}
+                <br>
+            </div>
+
+
+
+            <!-- Actual Wondercard view -->
+            <div class="create-view">
+                <div class="create-view-wrapper">
+                    <!-- img -->
+                    <img src="img/empty_wondercard.png" 
+                    alt="wondercard"
+                    class="create-view-card">
+
+                    <!-- <div 
+                    class="create-view-text"
+                    style="color: var(--wc-text-dark); left: 35.9%; top: 37.9%;">
+                    Please
+                    </div> -->
+
+                    
+                    <!-- title -->
+                    <div>
+                        <div 
+                        class="create-view-text"
+                        style="color: var(--wc-text-light); left: 12px; top: 46px;">
+                        AMEMONE the Shroomish has arrived!?
+                        </div>
+                    </div>
+                    
+                    <!-- description -->
+                    <div 
+                    class="create-view-text"
+                    style="color: var(--wc-text-dark); left: 12px; top: 182px;">
+                    Somehow, AMEMONE the Shroomish has<br>
+                    traveled through space and time<br>
+                    to join you on your adventure!<br>
+                    Thank you for using IVgift! :D
+                    </div>
+
+                    <!-- date -->
+
+                    <div 
+                    class="create-view-text"
+                    style="color: var(--wc-text-dark); left: 140px; top: 134;">
+                    Mar. 23, 2006
+                    </div>
+
+                    <!-- distribution info -->
+                    <div 
+                    class="create-view-text"
+                    style="color: var(--wc-text-dark); left: 12px; top: 270px;">
+                    This gift can be shared with as<br>
+                    many friends as you like.
+                    </div>
+
+                    <!-- icon left -->
+                    <div
+                    class="create-view-icon"
+                    style="left: 158px; top: -3px;">
+                        <span class="pokesprite pokemon shroomish"></span>
+                    </div>
+                    <!-- icon middle -->
+                    <div
+                    class="create-view-icon"
+                    style="left: 183px; top: -3px;">
+                        <span class="pokesprite pokemon shroomish"></span>
+                    </div>
+                    <!-- icon right -->
+                    <div
+                    class="create-view-icon"
+                    style="left: 208; top: -3px;">
+                        <span class="pokesprite pokemon shroomish"></span>
+                    </div>
+            
+                </div>
+            </div>
+
+
+            <!-- Submission and View button -->
+            <div class="create-button">
+                <button 
+                    hx-post="/api/generate"
+                    hx-include="#wc_editor"
+                    hx-target="#download_view">
+                Ready
+                </button>
+
+                <!-- Download button -->
+                <div id="download_view"></div>
+            </div>    
+        </div>
     </body>
-    <br>
-
-    <!-- Submission and View button -->
-    <button 
-        hx-post="/api/generate"
-        hx-include="#wc_editor"
-        hx-target="#download_view">
-    View your card
-    </button>
-
-    <!-- Download button -->
-    <div id="download_view"></div>
 </html>

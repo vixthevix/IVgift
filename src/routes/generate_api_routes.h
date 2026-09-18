@@ -693,7 +693,7 @@ NewRouteFunction(generate_apiPost) {
    //Build the HTML for the download button to send.
 
    dataVector vector = dataVectorInit(128);
-   dataVectorPushString(&vector, "<div> Card sent </div><br>\n");
+   //dataVectorPushString(&vector, "<div> Card sent </div><br>\n");
    dataVectorPushString(&vector, "<a href=\"data:application/zip;base64,");
    dataVectorPushString(&vector, wc_data_encoded);
    dataVectorPushString(&vector, "\" download=\"ivgift_wondercard.zip\">\n");
