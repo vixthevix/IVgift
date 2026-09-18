@@ -70,16 +70,16 @@ Make a separate component for each section.
 
                     
                     <!-- title -->
-                    <div>
-                        <div 
-                        class="create-view-text"
-                        style="color: var(--wc-text-light); left: 12px; top: 46px;">
-                        AMEMONE the Shroomish has arrived!?
-                        </div>
+                    <div
+                    id="create-view-title"
+                    class="create-view-text"
+                    style="color: var(--wc-text-light); left: 12px; top: 46px;">
+                    AMEMONE the Shroomish has arrived!?
                     </div>
                     
                     <!-- description -->
-                    <div 
+                    <div
+                    id="create-view-desc"
                     class="create-view-text"
                     style="color: var(--wc-text-dark); left: 12px; top: 182px;">
                     Somehow, AMEMONE the Shroomish has<br>
@@ -90,14 +90,16 @@ Make a separate component for each section.
 
                     <!-- date -->
 
-                    <div 
+                    <div
+                    id="create-view-date"
                     class="create-view-text"
                     style="color: var(--wc-text-dark); left: 140px; top: 134;">
                     Mar. 23, 2006
                     </div>
 
                     <!-- distribution info -->
-                    <div 
+                    <div
+                    id="create-view-distrib"
                     class="create-view-text"
                     style="color: var(--wc-text-dark); left: 12px; top: 270px;">
                     This gift can be shared with as<br>
@@ -106,18 +108,21 @@ Make a separate component for each section.
 
                     <!-- icon left -->
                     <div
+                    id="create-view-icon-left"
                     class="create-view-icon"
                     style="left: 158px; top: -3px;">
                         <span class="pokesprite pokemon shroomish"></span>
                     </div>
                     <!-- icon middle -->
                     <div
+                    id="create-view-icon-middle"
                     class="create-view-icon"
                     style="left: 183px; top: -3px;">
                         <span class="pokesprite pokemon shroomish"></span>
                     </div>
                     <!-- icon right -->
                     <div
+                    id="create-view-icon-right"
                     class="create-view-icon"
                     style="left: 208; top: -3px;">
                         <span class="pokesprite pokemon shroomish"></span>
@@ -129,7 +134,8 @@ Make a separate component for each section.
 
             <!-- Submission and View button -->
             <div class="create-button">
-                <button 
+                <button
+                    id="view-button" 
                     hx-post="/api/generate"
                     hx-include="#wc_editor"
                     hx-target="#download_view">
@@ -141,4 +147,7 @@ Make a separate component for each section.
             </div>    
         </div>
     </body>
+
+    <script src="web/scripts/wc_update.js"></script>
+
 </html>

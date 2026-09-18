@@ -475,7 +475,8 @@ int main(void) {
                 time_t t = time(NULL);
                 struct tm* tm_t = localtime(&t);
                 char curDate[50] = {0};
-                snprintf(curDate, 50, "%d-%02d-%02d", tm_t->tm_mday, tm_t->tm_mon + 1, tm_t->tm_year + 1900);
+                //snprintf(curDate, 50, "%d-%02d-%02d", tm_t->tm_mday, tm_t->tm_mon + 1, tm_t->tm_year + 1900);
+                snprintf(curDate, 50, "%d-%02d-%d", tm_t->tm_year + 1900, tm_t->tm_mon + 1, tm_t->tm_mday);
 
 
                 //Global container
