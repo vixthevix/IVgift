@@ -29,15 +29,16 @@ keyboard_buttons.forEach(button => {
         let char_count = focused_input.value.length;
         const char_max = focused_input.getAttribute("maxlength");
         
-        console.log(`focused_input: ${focused_input.value}`);
-        console.log(`char_count: ${char_count} char_max: ${char_max}`);
+        //console.log(`focused_input: ${focused_input.value}`);
+        //console.log(`char_count: ${char_count} char_max: ${char_max}`);
         
         if (!focused_input) return; //Don't do anything if we are not typing
         if (char_count >= char_max) return; //Keep within character max
 
         //Get character stored in button
         const curChar = button.getAttribute("data-char");
-        console.log(curChar);
+        
+        console.log(`0x${curChar.charCodeAt(0).toString(16)}`);
         
         //Insert the character at the end of the current string
         focused_input.setRangeText(

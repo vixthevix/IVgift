@@ -213,17 +213,36 @@ void writeWonderCardText(uint16_t* buffer, unsigned int* index, const uint32_t m
       else if (0x30a1 <= unicode && unicode <= 0x30f3) { //katakana
          input = 0x0053 + (unicode - 0x30a1);
       }
+      else if (0x00c0 <= unicode && unicode <= 0x00ff) { //accented latin range
+         input = 0x015f + (unicode - 0x00c0);
+      }
+      else if (0x244b <= unicode && unicode <= 0x2452) { //pokemon-specific emoticons
+         input = 0x0113 + (unicode - 0x244b);
+      }
+      else if (0x2600 <= unicode && unicode <= 0x2603) {//weather emoticons
+         input = 0x01d3 + (unicode - 0x2600);
+      }
+
+
       else { //special characters (TO FINISH)
          switch (unicode) {
             //ASCII characters
             case ' ' : input = 0x01de; break;
             case '!' : input = 0x01ab; break;
-            case '"' : input = 0x01b4; break; //There are multiple symbols in gen4, so not authentic.
+
+            case 0x201c:
+            case 0x201d: 
+            case '"'   : input = 0x01b4; break; //There are multiple symbols in gen4, so not authentic.
+            
             case '#' : input = 0x01c0; break;
             //No '$' symbol
             case '%' : input = 0x01d2; break;
             case '&' : input = 0x01c2; break; //Unused in game (?)
-            case '\'': input = 0x01b3; break; //There are multiple symbols in gen4, so not authentic.
+            
+            case 0x2018:
+            case 0x2019:
+            case '\''  : input = 0x01b3; break; //There are multiple symbols in gen4, so not authentic.
+            
             case '(' : input = 0x01b9; break;
             case ')' : input = 0x01ba; break;
             case '*' : input = 0x01bf; break;
@@ -244,30 +263,59 @@ void writeWonderCardText(uint16_t* buffer, unsigned int* index, const uint32_t m
             //No '^' symbol
             case '_' : input = 0x01e8; break; //Unused in game (?)
             //No '`' symbol, may be 0x01b2 but unsure
+            case '~' : input = 0x01c3; break;
             
-            //Unicode punctuation
+            
+            //Unicode characters
+            case 0x00a1 : input = 0x01a9; break; // ¡ symbol
+            //No '¢' symbol
+            //No '£' symbol
+            case 0x00a4 : input = 0x01a8; break; // pokedollar symbol
+            //No yen symbol
+            //No copyright symbol
+            case 0x00ab : input = 0x01b7; break; // guillemet left symbol
+            case 0x00b7 : input = 0x01b0; break; // middle dot symbol
+            case 0x00ba : input = 0x01a4; break; // masculine ordinal indicator symbol
+            case 0x00bb : input = 0x01b8; break; // guillemet right symbol
+            case 0x00bf : input = 0x01aa; break; // ¿ symbol
+            // No 'Ÿ' symbol
+            case 0x201e : input = 0x01b6; break; // „ symbol
+            case 0x2026 : input = 0x01af; break; // triple dot symbol
+            // No euro symbol
+            case 0x2190 : input = 0x011b; break; // left arrow
+            case 0x2191 : input = 0x011c; break; // up arrow
+            case 0x2193 : input = 0x011d; break; // down arrow
+            case 0x2192 : input = 0x011e; break; // right arrow
+            case 0x23fe : input = 0x01dd; break; // zz sleep symbol
+            
+            // There are some shape symbols, but in the font they look different.
+            // Therefore, I will ignore them for now until font becomes better.
 
-            // case '~' : input = 0x0000; break;
-            // case ' ' : input = 0x0000; break; // ¡ symbol
-            // case ' ' : input = 0x0000; break; // ¢ symbol
-            // case ' ' : input = 0x0000; break; // £ symbol
-            // case ';' : input = 0x0000; break; // pokedollar symbol
-            // case ';' : input = 0x0000; break; // yen symbol
-            // case ';' : input = 0x0000; break; // copyright symbol
-            // case ';' : input = 0x0000; break; //…
-            // case ';' : input = 0x0000; break;
-            // case ';' : input = 0x0000; break;
-            // case ';' : input = 0x0000; break;
-            // case ';' : input = 0x0000; break;
-            // case ';' : input = 0x0000; break;
-            // case ';' : input = 0x0000; break;
-            
+            case 0x25ba : input = 0x011f; break; // big triangle symbol
+            case 0x2660: input = 0x01c6; // spade symbol
+            case 0x2663: input = 0x01c7; // club symbol
+            case 0x2665: input = 0x01c8; // heart symbol
+            case 0x2666: input = 0x01c9; // diamond symbol
+            case 0x2605: input = 0x01ca; // star symbol
+            case 0x263a: input = 0x01d7; // happy emoticon
+            case 0x263b: input = 0x01d8; // thrilled emoticon
+            case 0x2638: input = 0x01d9; // angry emoticon
+            case 0x2639: input = 0x01da; // upset emoticon
+            case 0x2642: input = 0x01bb; // male symbol
+            case 0x2640: input = 0x01bc; // female symbol
+            case 0x266a: input = 0x01d1; // music note symbol
+            case 0x2934: input = 0x01db; // curly up arrow
+            case 0x2935: input = 0x01dc; // curly down arrow
+            case 0x300c: input = 0x00e8; // japanese border left symbol
+            case 0x300d: input = 0x00e9; // japanese border right symbol
+            case 0x300e: input = 0x00ea; // japanese bold border left symbol
+            case 0x300f: input = 0x00eb; // japanese bold border right symbol
 
             case '\n': input = 0xe000; break; //undocumented on bulbapedia
 
             //default error as '?'
-            case '?' :
-            default  : input = 0x01ac; break;
+            case '?':
+            default : input = 0x01ac; break;
          }
       }
 
