@@ -5,20 +5,38 @@
             {{INSERT:assets/web/components/picture.html;img_light="img/light/logo_light.png",img_dark="img/dark/logo_dark.png",name="logo",height=400,width=400}}
         </div>
     </head>
+
     <div style="position: fixed; top: 0; right: 0;">
-        <form action="/" method="POST">
+        <form id="info_form" action="/" method="POST">
             <input type="hidden" name="action" value="switch_info">
             {{INSERT:assets/web/components/button.html;normal="img/info.png",pressed="img/info_pressed.png",width=100,height=100}}
         </form>
     </div>
 
-    <form action="/" method="POST" style="display: flex; justify-content: center;">
+    <form id="new_form" action="/" method="POST" style="display: flex; justify-content: center;">
         <input type="hidden" name="action" value="switch_new">
         {{INSERT:assets/web/components/button.html;normal="img/new.png",pressed="img/new_pressed.png",height=150}}
     </form>
-    <form action="/" method="POST" style="display: flex; justify-content: center;">
+
+    <form id="edit_form" action="/" method="POST" style="display: flex; justify-content: center;">
+        <!-- route path for editing -->
         <input type="hidden" name="action" value="switch_edit">
-        {{INSERT:assets/web/components/button.html;normal="img/edit.png",pressed="img/edit_pressed.png",height=150}}
+        
+        <!-- interface set up for file selection -->
+        <input id="wc_data_upload" type="file" accept=".pgt, .pcd, .myg" style="display: none;">
+    
+        <!-- actual file that gets sent -->
+        <input id="wc_data_raw" type="hidden" name="wc_data_raw">
+
+        <!-- Actual button, wrapped up for JS interception -->
+        <div id="edit_button">
+            {{INSERT:assets/web/components/button.html;normal="img/edit.png",pressed="img/edit_pressed.png",height=150}}
+        </div>
+        
     </form>
+
+            <!-- Script for handling the edit route init -->
+        <script type="module" src="web/scripts/base64_encode.js"></script> 
+        <script type="text/javascript" src="web/scripts/edit_upload.js"></script>
 
 </html>

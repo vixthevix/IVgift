@@ -2,13 +2,18 @@
     
     <label>
         Wonder Card Title: <br>
-        <input id="title_input" type="text" name="title_input" maxlength="36" placeholder="Type here...">
+        <input 
+        id="title_input" type="text" name="title_input" 
+        maxlength="36" placeholder="Type here..."
+        value="{{VAR:edit_title;" "}}">
     </label>
     <br>
     <label>
         Wonder Card Description: <br>
         <!-- <input type="text" name="wc-title" size="100" maxlength="250" placeholder="Type here..."> -->
-         <textarea id="desc_input" name="desc_input" maxlength="250" placeholder="Type here..."></textarea>
+        <textarea 
+        id="desc_input" name="desc_input" 
+        maxlength="250" placeholder="Type here...">{{VAR:edit_desc;" "}}</textarea>
     </label>
     <br>
     <!-- Character Sidebar -->

@@ -120,14 +120,14 @@ char* base64_encode_binary(uint8_t* bin, size_t size) {
 }
 
 //Don't think this is needed.
-char* base64_decode_binary(char* cipher, size_t size) {
+uint8_t* base64_decode_binary(char* cipher) {
 
     char counts = 0;
-    char buffer[4];
-    char* plain = (char*) malloc(size * 3 / 4);
+    uint8_t buffer[4];
+    uint8_t* plain = (uint8_t*) malloc(strlen(cipher) * 3 / 4);
     int i = 0, p = 0;
 
-    for(i = 0; i < size; i++) {
+    for(i = 0; i < strlen(cipher); i++) {
         char k;
         for(k = 0 ; k < 64 && base46_map[k] != cipher[i]; k++);
         buffer[counts++] = k;

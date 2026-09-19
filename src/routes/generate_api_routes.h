@@ -45,8 +45,8 @@ uint16_t* generatePGT(stringMap* src) {
       else index++; //0x0000
    }
    else { //OT check
-      char* OC_check = strMapGet(src, "OC_check");
-      if (OC_check && strcmp(OC_check, "true") == 0) {
+      char* OT_check = strMapGet(src, "OT_check");
+      if (OT_check && strcmp(OT_check, "true") == 0) {
          //If set, means yes, so remains at 0x0000
          index++;
       }
@@ -351,7 +351,7 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    title_limit = 36,
    desc_limit  = 250;
 
-   //Title - CURRENTLY BUGGED SEG FAULT
+   //Title
    char* title_input = strMapGet(src, "title_input");
    if (title_input) fprintf(stderr, "TITLE INPUT GOT: %s\n\n", title_input);
    writeWonderCardText(buffer, &index, title_limit, title_input);
