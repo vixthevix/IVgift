@@ -31,24 +31,25 @@ Make a separate component for each section.
         <div class="create-layout">
             <div id="wc_editor" class="create-editor">
                 <!-- PGT data -->
-                {{INSERT:assets/web/components/create/gift_type.html}}
+                {{INSERT:assets/web/components/create/gift_type.html;edit_type_pokemon=global.edit_type_pokemon,edit_type_egg=global.edit_type_egg,edit_type_item=global.edit_type_item}}
                 <br>
-                {{INSERT:assets/web/components/create/gift_type_data.html}}
+                {{INSERT:assets/web/components/create/gift_type_data.html;edit_OT_flag=global.edit_OT_flag,edit_item_id=global.edit_item_id,edit_item_sprite=global.edit_item_sprite,edit_item_name=global.edit_item_name}}
                 <br>
-                {{INSERT:assets/web/components/create/pokemon_data.html}}
+                {{INSERT:assets/web/components/create/pokemon_data.html;edit_ek4_status=global.edit_ek4_status,edit_ek4_base64=global.edit_ek4_base64}}
                 <br>
                 <!-- PCD data -->
-                {{INSERT:assets/web/components/create/wc_text.html;special_chars=global.special_chars}}
+                {{INSERT:assets/web/components/create/wc_text.html;special_chars=global.special_chars,edit_title=global.edit_title,edit_desc=global.edit_desc}}
                 <br>
-                {{INSERT:assets/web/components/create/wc_icons.html}}
+                {{INSERT:assets/web/components/create/wc_icons.html;edit_icon_left_id=global.edit_icon_left_id,edit_icon_left_sprite=global.edit_icon_left_sprite,edit_icon_left_name=global.edit_icon_left_name,edit_icon_middle_id=global.edit_icon_middle_id,edit_icon_middle_sprite=global.edit_icon_middle_sprite,edit_icon_middle_name=global.edit_icon_middle_name,edit_icon_right_id=global.edit_icon_right_id,edit_icon_right_sprite=global.edit_icon_right_sprite,edit_icon_right_name=global.edit_icon_right_name}}
+                
                 <br>
-                {{INSERT:assets/web/components/create/wc_distrib_count.html}}
+                {{INSERT:assets/web/components/create/wc_distrib_count.html;edit_distrib_count=global.edit_distrib_count,edit_distrib_infinite=global.edit_distrib_infinite}}
                 <br>
-                {{INSERT:assets/web/components/create/wc_id.html}}
+                {{INSERT:assets/web/components/create/wc_id.html;edit_wc_id=global.edit_wc_id}}
                 <br>
-                {{INSERT:assets/web/components/create/wc_date.html;server_date=global.server_date}}
+                {{INSERT:assets/web/components/create/wc_date.html;server_date=global.server_date,edit_date=global.edit_date}}
                 <br>
-                {{INSERT:assets/web/components/create/game_flags.html}}
+                {{INSERT:assets/web/components/create/game_flags.html;edit_flag_d=global.edit_flag_d,edit_flag_p=global.edit_flag_p,edit_flag_pt=global.edit_flag_pt,edit_flag_hg=global.edit_flag_hg,edit_flag_ss=global.edit_flag_ss}}
                 <br>
             </div>
 

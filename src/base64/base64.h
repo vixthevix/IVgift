@@ -147,30 +147,43 @@ uint8_t* base64_decode_binary(char* cipher) {
 
 size_t base64_decode_size(char* cipher) {
 
-    char counts = 0;
-    char buffer[4];
-    //char* plain = (char*) malloc(strlen(cipher) * 3 / 4);
-    int i = 0, p = 0;
+    // char counts = 0;
+    // char buffer[4];
+    // //char* plain = (char*) malloc(strlen(cipher) * 3 / 4);
+    // int i = 0, p = 0;
 
-    for(i = 0; cipher[i] != '\0'; i++) {
-        char k;
-        for(k = 0 ; k < 64 && base46_map[k] != cipher[i]; k++);
-        buffer[counts++] = k;
-        if(counts == 4) {
-            //plain[p++] = (buffer[0] << 2) + (buffer[1] >> 4);
-            p++;
-            if(buffer[2] != 64)
-                p++;
-                //plain[p++] = (buffer[1] << 4) + (buffer[2] >> 2);
-            if(buffer[3] != 64)
-                p++;    
-                //plain[p++] = (buffer[2] << 6) + buffer[3];
-            counts = 0;
-        }
-    }
+    // for(i = 0; cipher[i] != '\0'; i++) {
+    //     char k;
+    //     for(k = 0 ; k < 64 && base46_map[k] != cipher[i]; k++);
+    //     buffer[counts++] = k;
+    //     if(counts == 4) {
+    //         //plain[p++] = (buffer[0] << 2) + (buffer[1] >> 4);
+    //         p++;
+    //         if(buffer[2] != 64)
+    //             p++;
+    //             //plain[p++] = (buffer[1] << 4) + (buffer[2] >> 2);
+    //         if(buffer[3] != 64)
+    //             p++;    
+    //             //plain[p++] = (buffer[2] << 6) + buffer[3];
+    //         counts = 0;
+    //     }
+    // }
 
-    //plain[p] = '\0';    /* string padding character */
-    return p;
+    // //plain[p] = '\0';    /* string padding character */
+    // return p;
+    if (!cipher) return 0;
+    
+    size_t len = strlen(cipher);
+    if (len == 0) return 0;
+
+    // Start with the maximum possible size
+    size_t decoded_size = (len / 4) * 3;
+
+    // Subtract 1 byte for every padding character '=' at the end
+    if (len >= 1 && cipher[len - 1] == '=') decoded_size--;
+    if (len >= 2 && cipher[len - 2] == '=') decoded_size--;
+
+    return decoded_size;
 }
 
 size_t base64_encode_size(char* plain) {

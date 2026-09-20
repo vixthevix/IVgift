@@ -3,12 +3,12 @@
     <label>
         Distribution count:
         <input type="number" 
-        id="distrib_input" name="distrib_count" value="0" 
+        id="distrib_input" name="distrib_count" value="{{VAR:edit_distrib_count;"0"}}" 
         min="0" max="255" step="1">
         <br>
     </label>
     <label>
-        <input id="distrib_infinite" type="checkbox" name="distrib_infinite" value="true">
+        <input id="distrib_infinite" type="checkbox" name="distrib_infinite" value="true" {{VAR:edit_distrib_infinite;" "}}>
         Unlimited redistribution?
     </label>
 </div>

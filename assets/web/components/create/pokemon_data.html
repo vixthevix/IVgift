@@ -3,11 +3,17 @@
 <div id="pokemon-gift-data" class="type-selection-class">
     Upload your encrypted Pokemon data: <br>
     
+    <!-- Data loaded notifier -->
+    <div style="color: green;">
+        {{VAR:edit_ek4_status;" "}}
+    </div>
+    <br>
+
     <!-- Upload button -->
     <input type="file" id="pokemon_data_upload" accept=".ek4">
     
     <!-- What actually gets sent -->
-    <input type="hidden" id="pokemon_data_raw" name="pokemon_data_raw">
+    <input type="hidden" id="pokemon_data_raw" name="pokemon_data_raw" value="{{VAR:edit_ek4_base64;" "}}">
 
     <!-- Encoding script script -->
     <script type="module" src="web/scripts/base64_encode.js"></script> 
