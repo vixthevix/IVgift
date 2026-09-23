@@ -32,8 +32,10 @@ typedef struct WonderCard {
 WonderCard readPGT(uint16_t* bin) {
    const uint16_t size = 260;
    uint16_t index = 0;
-   WonderCard card = {0};
-   WonderCard error = {0};
+   WonderCard card;
+   WonderCard error;
+   memset(&card, 0, sizeof(WonderCard));
+   memset(&error, 0, sizeof(WonderCard));
    if (!bin) return card;
 
    //Gift type;
@@ -192,8 +194,8 @@ char* readWonderCardText(uint16_t* bin, uint16_t* index, const uint32_t max_char
       else if (0x0002 <= code && code <= (0x0002 + 0x3093 - 0x3041)) { //hiragana
          input = 0x3041 + (code - 0x0002);
       }
-      else if (0x0053 <= code && code <= (0x0053 + 0x30f3 - 0x30a1)) { //katakana
-         input = 0x30a1 + (code - 0x0053);
+      else if (0x0052 <= code && code <= (0x0052 + 0x30f3 - 0x30a1)) { //katakana
+         input = 0x30a1 + (code - 0x0052);
       }
       else if (0x015f <= code && code <= (0x015f + 0x00ff - 0x00c0)) { //accented latin range
          input = 0x00c0 + (code - 0x015f);
@@ -346,7 +348,7 @@ WonderCard readPCD(uint16_t* bin) {
    struct tm date = {0};
    gmtime_r((time_t*)(&date_seconds), &date);
 
-   card.distrib_date = (char*) calloc(strlen("YYYY-MM-DD") + 1, sizeof(char));
+   card.distrib_date = (char*) calloc((strlen("YYYY-MM-DD") * 2) + 1, sizeof(char));
    sprintf(card.distrib_date, "%i-%02i-%02i", date.tm_year + 1900, date.tm_mon + 1, date.tm_mday);
    
    index++; //0x0000
@@ -363,13 +365,15 @@ WonderCard readMYG(uint16_t* bin) {
 
    //an MYG file does not add any new information to the card.
    //So we read from offset 0x50
+   //uint16_t so halve it.
    
-   return readPCD(&bin[0x50]);
+   return readPCD(&bin[0x50 >> 1]);
 }
 
 
 WonderCard WonderCardInit(char* file) {
-   WonderCard card = {0};
+   WonderCard card;
+   memset(&card, 0, sizeof(WonderCard));
    if (!file) return card;
    
    //Get the file length, see if valid.
@@ -433,7 +437,8 @@ void WonderCardDisplay(WonderCard card) {
 }
 
 bool prepareWonderCardEdit(int client, char* file, siteVar** global) {
-   WonderCard card = WonderCardInit(file);
+   WonderCard card = {0};
+   card = WonderCardInit(file);
    WonderCardDisplay(card);
    //We now need to send over a new HTML file.
    //Insert our read data.
@@ -554,7 +559,7 @@ NewRouteFunction(homePost) {
       //We have a file payload now.
       char* file = strMapGet(payload, "wc_data_raw");
 
-      siteVar* global = extraData;
+      siteVar* global = siteVarClone(extraData);
       fprintf(stderr, "GLOBAL NAME IS %s\n\n", global->name);
 
       status = prepareWonderCardEdit(clientfd, file, &global);
@@ -566,10 +571,10 @@ NewRouteFunction(homePost) {
 
       //get the openHTML data.
       //check if we have important data
-      siteVar* special_chars = siteVarCompositeAccessReference(global, "special_chars");
-      if (special_chars) {
-         fprintf(stderr, "special chars is valid, %s\n\n", special_chars->name);
-      }
+      // siteVar* special_chars = siteVarCompositeAccessReference(global, "special_chars");
+      // if (special_chars) {
+      //    fprintf(stderr, "special chars is valid, %s\n\n", special_chars->name);
+      // }
       
       siteVar* variables = siteVarInit("variables", COMPOSITE, 0, NULL);
       siteVarCompositeInsert(&variables, global);
@@ -582,21 +587,26 @@ NewRouteFunction(homePost) {
 
       HttpResponseAddPayload(&response, data, strlen(data));
       
-      HttpResponseAddOption(&response, "Content-Type", "text/html");
+      HttpResponseAddOption(&response, "Content-Type", "text/html; charset=UTF-8");
       HttpResponseAddOption(&response, "Connection", "close");
       HttpResponseAddOption(&response, "HX-Push-Url", "/create");
 
       // status = sendRedirect("/create", clientfd);
       status = sendCustom(response, clientfd);
-      //HttpResponseFree(response);
+      HttpResponseFree(response);
       if (data) free(data);
-      //siteVarFree(variables);
+      if (status) fprintf(stderr, "sendCustom worked\n");
+      siteVarFree(variables);
+      siteVarFree(global);
+      fprintf(stderr, "homePost variables freed\n");
       //return status;   
    }
    
 
    end:
-   strMapFree(payload);
+   if (payload) strMapFree(payload);
+   payload = NULL;
+   fprintf(stderr, "payload freed\n");
    return status;
 }
 NewRouteFunction(homePut) {

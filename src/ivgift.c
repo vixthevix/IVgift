@@ -504,8 +504,8 @@ int main(void) {
 
                 //Cleanup
                 HttpRequestFree(request);
-                siteVarFree(global);
                 siteVarFree(special_chars_var);
+                siteVarFree(global);
                 CotPollPop(server->poll, active_fd);
                 if (clientOffload) free(clientOffload);
                 serverCloseClient(active_fd);
