@@ -1,5 +1,49 @@
 <html>
-    <link rel="stylesheet" href="web/styles/screen_mode.css">
+<link rel="stylesheet" href="web/styles/screen_mode.css">
 
-    I LOVE IVGIFT!!!!!
+<!-- Return button -->
+<form action="/" method="GET" style="top: 0; left: 0;">
+    {{INSERT:assets/web/components/button.html;normal="img/return.png",pressed="img/return_pressed.png",width=50,height=50}}
+</form>
+
+<!-- BG Image -->
+<div style="position: absolute; opacity: 20%; right: 45%; top: 45%;">
+    <img 
+    src="img/mew.png" 
+    alt=""
+    width="512">
+
+</div>
+
+<!-- Main text -->
+<div style="white-space: pre">
+Heya! x3
+
+
+IVgift is a program that allows you to create and edit Generation IV Pokemon Mystery Gifts.
+
+Mystery Gift data is stored in the following formats:
+
+    PGT - Pokemon Gift, 260 bytes, stores the data to be received in-game via the Mailman in the Poke-Mart.
+    
+    PCD - Pokemon Card Data, 856 bytes, stores the PGT alongside the Wonder Card information, such as text and icons.
+    
+    MYG - Mystery Gift, 936 bytes, a wrapper for the PCD data. This is the file that is sent during Mystery Gift transmission.
+
+Any one of these files can be uploaded for editing in IVgift.
+
+A collection of Mystery Gifts for Generation IV can be found at <a href="https://projectpokemon.org/home/files/category/3-generation-4/">Project Pokemon</a>.
+
+Additionally, your generated MYG/PCD files can be uploaded to your games via:
+
+    <a href="https://projectpokemon.org/tutorials/save-editing/using-pkhex/importing-wondercards-r29/">PKHex</a>
+
+    <a href="https://github.com/vixthevix/IVnet">IVnet</a> (this method can be done directly with your physical game cartridges)
+
+
+I hope you enjoy using IVGift!
+
+- vixthevix, a Human from Earth
+</div>
+
 </html>

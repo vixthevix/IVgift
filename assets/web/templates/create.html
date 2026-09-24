@@ -24,12 +24,20 @@ Make a separate component for each section.
 
     </head>
 
+
+
     <!-- LOGO -->
     <div></div>
     
     <body>
         <div class="create-layout">
+            <!-- Return button -->
+            <form action="/" method="GET" style="top: 0; left: 0;">
+                {{INSERT:assets/web/components/button.html;normal="img/return.png",pressed="img/return_pressed.png",width=50,height=50}}
+            </form>
+
             <div id="wc_editor" class="create-editor">
+                <br><br>
                 <!-- PGT data -->
                 {{INSERT:assets/web/components/create/gift_type.html;edit_type_pokemon=global.edit_type_pokemon,edit_type_egg=global.edit_type_egg,edit_type_item=global.edit_type_item}}
                 <br>
@@ -50,7 +58,7 @@ Make a separate component for each section.
                 {{INSERT:assets/web/components/create/wc_date.html;server_date=global.server_date,edit_date=global.edit_date}}
                 <br>
                 {{INSERT:assets/web/components/create/game_flags.html;edit_flag_d=global.edit_flag_d,edit_flag_p=global.edit_flag_p,edit_flag_pt=global.edit_flag_pt,edit_flag_hg=global.edit_flag_hg,edit_flag_ss=global.edit_flag_ss}}
-                <br>
+                <br><br>
             </div>
 
 
@@ -75,7 +83,7 @@ Make a separate component for each section.
                     id="create-view-title"
                     class="create-view-text"
                     style="color: var(--wc-text-light); left: 12px; top: 46px;">
-                    AMEMONE the Shroomish has arrived!?
+                    <!-- AMEMONE the Shroomish has arrived!? -->
                     </div>
                     
                     <!-- description -->
@@ -83,10 +91,10 @@ Make a separate component for each section.
                     id="create-view-desc"
                     class="create-view-text"
                     style="color: var(--wc-text-dark); left: 12px; top: 182px;">
-                    Somehow, AMEMONE the Shroomish has<br>
+                    <!-- Somehow, AMEMONE the Shroomish has<br>
                     traveled through space and time<br>
                     to join you on your adventure!<br>
-                    Thank you for using IVgift! :D
+                    Thank you for using IVgift! :D -->
                     </div>
 
                     <!-- date -->
@@ -95,7 +103,7 @@ Make a separate component for each section.
                     id="create-view-date"
                     class="create-view-text"
                     style="color: var(--wc-text-dark); left: 140px; top: 134;">
-                    Mar. 23, 2006
+                    <!-- Mar. 23, 2006 -->
                     </div>
 
                     <!-- distribution info -->
@@ -103,8 +111,8 @@ Make a separate component for each section.
                     id="create-view-distrib"
                     class="create-view-text"
                     style="color: var(--wc-text-dark); left: 12px; top: 270px;">
-                    This gift can be shared with as<br>
-                    many friends as you like.
+                    <!-- This gift can be shared with as<br>
+                    many friends as you like. -->
                     </div>
 
                     <!-- icon left -->
@@ -112,21 +120,21 @@ Make a separate component for each section.
                     id="create-view-icon-left"
                     class="create-view-icon"
                     style="left: 158px; top: -3px;">
-                        <span class="pokesprite pokemon shroomish"></span>
+                        <!-- <span class="pokesprite pokemon shroomish"></span> -->
                     </div>
                     <!-- icon middle -->
                     <div
                     id="create-view-icon-middle"
                     class="create-view-icon"
                     style="left: 183px; top: -3px;">
-                        <span class="pokesprite pokemon shroomish"></span>
+                        <!-- <span class="pokesprite pokemon shroomish"></span> -->
                     </div>
                     <!-- icon right -->
                     <div
                     id="create-view-icon-right"
                     class="create-view-icon"
                     style="left: 208; top: -3px;">
-                        <span class="pokesprite pokemon shroomish"></span>
+                        <!-- <span class="pokesprite pokemon shroomish"></span> -->
                     </div>
             
                 </div>
@@ -135,14 +143,13 @@ Make a separate component for each section.
 
             <!-- Submission and View button -->
             <div class="create-button">
-                <button
+                <form
                     id="view-button" 
                     hx-post="/api/generate"
                     hx-include="#wc_editor"
                     hx-target="#download_view">
-                Ready
-                </button>
-
+                {{INSERT:assets/web/components/button.html;normal="img/view.png",pressed="img/view_pressed.png",height=75,width=125}}
+                </form>
                 <!-- Download button -->
                 <div id="download_view"></div>
             </div>    

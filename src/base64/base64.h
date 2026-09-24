@@ -86,7 +86,7 @@ char* base64_decode(char* cipher) {
 }
 
 char* base64_encode_binary(uint8_t* bin, size_t size) {
-
+    if (!bin) return NULL;
     char counts = 0;
     uint8_t buffer[3];
     char* cipher = (char*) malloc(size * 4 / 3 + 4);

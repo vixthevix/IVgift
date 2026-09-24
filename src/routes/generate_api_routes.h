@@ -745,8 +745,25 @@ NewRouteFunction(generate_apiPost) {
    dataVectorPushString(&vector, "<a href=\"data:application/zip;base64,");
    dataVectorPushString(&vector, wc_data_encoded);
    dataVectorPushString(&vector, "\" download=\"ivgift_wondercard.zip\">\n");
-   dataVectorPushString(&vector, "<button type=\"button\">Download Card</button>\n");
+
+   //We have to make a sitevar for this
+   siteVar* button_vars = siteVarInit("vars", COMPOSITE, 0, NULL);
+   siteVarCompositeInsertNew(&button_vars, "normal", STRING, 1, (string_cot[]){"img/download.png"});
+   siteVarCompositeInsertNew(&button_vars, "pressed", STRING, 1, (string_cot[]){"img/download_pressed.png"});
+   siteVarCompositeInsertNew(&button_vars, "width", UINT, 1, (uint_cot[]){125});
+   siteVarCompositeInsertNew(&button_vars, "height", UINT, 1, (uint_cot[]){75});
+
+   char* button_html = NULL;
+   if (openHTML(&button_html, "assets/web/components/button.html", button_vars).status == COT_OK) {
+      dataVectorPushString(&vector, button_html);
+   }
+   else {
+      dataVectorPushString(&vector, "<button type=\"button\">Download Card</button>\n");
+   }
+
    dataVectorPushString(&vector, "</a>");
+
+   if (button_vars) siteVarFree(button_vars);
 
    
    HttpResponseAddPayload(&response, vector.data, strlen(vector.data));
