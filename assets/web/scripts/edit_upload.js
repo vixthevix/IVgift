@@ -50,7 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("hello");
 
             //submit automatically.
-            edit_form.submit();
+            htmx.trigger('#edit_form', 'submit');
+            //edit_form.submit();
         }
 
         //Finally, read the data uploaded.

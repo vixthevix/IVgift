@@ -7,7 +7,7 @@
 
 #define SwapEndian(x) (x >> 8) | (x << 8)
 
-uint16_t* generatePGT(stringMap* src) {
+uint16_t* generatePGT(stringMap* src, char* return_msg) {
    if (!src) return NULL;
    
    //A two-byte buffer works best.
@@ -16,7 +16,10 @@ uint16_t* generatePGT(stringMap* src) {
 
    //Gift type
    char* type = strMapGet(src, "type");
-   if (!type) return NULL; //required field.
+   if (!type) { //required field.
+      sprintf(return_msg, "No type set");
+      return NULL;
+   }
    
    bool isItem = false;
    if (strcmp(type, "pokemon") == 0) {
@@ -29,7 +32,10 @@ uint16_t* generatePGT(stringMap* src) {
       buffer[index++] = 0x0003;
       isItem = true;
    }
-   else return NULL; //Must be one of these 3
+   else { //Must be one of these 3
+      sprintf(return_msg, "Gift type is invalid");
+      return NULL;
+   }
 
    index++; //0x0000
 
@@ -59,7 +65,10 @@ uint16_t* generatePGT(stringMap* src) {
    if (!isItem) {
       //An encrypted pokemon ek4 file is 236 bytes.
       char* pokemon_data_raw = strMapGet(src, "pokemon_data_raw");
-      if (!pokemon_data_raw) return NULL; //required
+      if (!pokemon_data_raw) { //required
+         sprintf(return_msg, "No Pokemon ek4 data found");
+         return NULL;
+      }
 
       //base64 and url encoded right now.
       char* url_decoded = urlDecode(pokemon_data_raw);
@@ -68,8 +77,9 @@ uint16_t* generatePGT(stringMap* src) {
       
       //with this url_decoded functionality, we can see the size of the file.
       size_t bin_size = base64_decode_size(url_decoded);
-      if (bin_size != 236) {
+      if (bin_size != 236) { //required field.
          free(url_decoded);
+         sprintf(return_msg, "ek4 file is invalid, size is wrong");
          return NULL;
       }
 
@@ -77,6 +87,7 @@ uint16_t* generatePGT(stringMap* src) {
       char* bin = base64_decode(url_decoded);
       if (!bin) {
          free(url_decoded);
+         sprintf(return_msg, "Could not base64 decode ek4 file");
          return NULL;
       }
 
@@ -107,7 +118,10 @@ uint16_t* generatePGT(stringMap* src) {
    buffer[index] = 0; //null terminate
    //with that, we are good to go.
    uint16_t* return_buffer = (uint16_t*) calloc(index + 1, sizeof(uint16_t));
-   if (!return_buffer) return NULL; //allocation error
+   if (!return_buffer) {
+      sprintf(return_msg, "Could not allocate PGT return buffer");
+      return NULL;
+   }
 
    memcpy(return_buffer, buffer, (index + 1) * sizeof(uint16_t));
 
@@ -327,7 +341,7 @@ void writeWonderCardText(uint16_t* buffer, unsigned int* index, const uint32_t m
    *index = i;
 }
 
-uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
+uint16_t* generatePCD(stringMap* src, uint16_t* pgt, char* return_msg) {
    if (!src) return NULL;
 
    uint16_t buffer[1000] = {0};
@@ -336,8 +350,11 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    //Read in the pgt
    bool pgt_available = !!(pgt);
    if (!pgt_available) {
-      pgt = generatePGT(src);
-      if (!pgt) return NULL;
+      pgt = generatePGT(src, return_msg);
+      if (!pgt) {
+         //Don't change return_msg here as set in generatePGT
+         return NULL;
+   }
    }
    //A PGT file is 260 bytes.
    index = 260 >> 1;
@@ -354,6 +371,7 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    //Title
    char* title_input = strMapGet(src, "title_input");
    if (title_input) fprintf(stderr, "TITLE INPUT GOT: %s\n\n", title_input);
+   if (!title_input) title_input = "";
    writeWonderCardText(buffer, &index, title_limit, title_input);
 
    fprintf(stderr, "PCD TITLE\n\n");
@@ -391,7 +409,7 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    char* wc_id = strMapGet(src, "wc_id");
    if (wc_id) wc_id_num = atoi(wc_id);
 
-   wc_id_num = SwapEndian(wc_id_num);
+   //wc_id_num = SwapEndian(wc_id_num);
 
    buffer[index++] = wc_id_num;
 
@@ -403,6 +421,7 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
 
    //Description text
    char* desc_input = strMapGet(src, "desc_input");
+   if (!desc_input) desc_input="";
    writeWonderCardText(buffer, &index, desc_limit, desc_input);
 
    fprintf(stderr, "PCD DESC\n\n");
@@ -502,7 +521,10 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
       date.tm_mday = day   - system_day_diff;
       date.tm_isdst = -1; //daylight savings, system choice
    }
-   else return NULL; //probably invalid
+   else { //probably invalid
+      sprintf(return_msg, "Date is invalid");
+      return NULL;
+   } 
 
    //date struct set up, so get the difference.
    time_t epoch_t = mktime(&epoch);
@@ -521,14 +543,17 @@ uint16_t* generatePCD(stringMap* src, uint16_t* pgt) {
    buffer[index] = 0; //null terminate
    //with that, we are good to go.
    uint16_t* return_buffer = (uint16_t*) calloc(index + 1, sizeof(uint16_t));
-   if (!return_buffer) return NULL; //allocation error
+   if (!return_buffer) { //allocation error
+      sprintf(return_msg, "Could not allocate PCD return buffer");
+      return NULL;
+   } 
 
    memcpy(return_buffer, buffer, (index + 1) * sizeof(uint16_t));
 
    return return_buffer;
 }
 
-uint16_t* generateMYG(stringMap* src, uint16_t* pcd) {
+uint16_t* generateMYG(stringMap* src, uint16_t* pcd, char* return_msg) {
    if (!src) return NULL;
 
    uint16_t buffer[1000] = {0};
@@ -537,7 +562,7 @@ uint16_t* generateMYG(stringMap* src, uint16_t* pcd) {
    //Read in the pcd
    bool pcd_available = !!(pcd);
    if (!pcd_available) {
-      pcd = generatePCD(src, NULL);
+      pcd = generatePCD(src, NULL, return_msg);
       if (!pcd) return NULL;
    }
    //A PCD file is 856 bytes.
@@ -558,7 +583,10 @@ uint16_t* generateMYG(stringMap* src, uint16_t* pcd) {
    myg_buffer[myg_index] = 0; //null terminate
    //with that, we are good to go.
    uint16_t* return_buffer = (uint16_t*) calloc(myg_index + 1, sizeof(uint16_t));
-   if (!return_buffer) return NULL; //allocation error
+   if (!return_buffer) {
+      sprintf(return_msg, "Could not allocate MYG return buffer");
+      return NULL;
+   }
 
    memcpy(return_buffer, myg_buffer, (myg_index + 1) * sizeof(uint16_t));
 
@@ -591,12 +619,56 @@ NewRouteFunction(generate_apiPost) {
    pcd_size = 856,
    myg_size = 936;
 
-   uint16_t* pgt = generatePGT(payload);
-   if (pgt) fprintf(stderr, "PGT SUCCESS\n\n");
-   uint16_t* pcd = generatePCD(payload, pgt);
-   if (pcd) fprintf(stderr, "PCD SUCCESS\n\n");
-   uint16_t* myg = generateMYG(payload, pcd);
-   if (myg) fprintf(stderr, "MYG SUCCESS\n\n");
+   char return_msg[512] = {0};
+   dataVector vector = dataVectorInit(128);
+   uint8_t* wc_zip_data = NULL;
+   char* wc_data_encoded = NULL;
+   char* filename = NULL;
+   bool new_filename = false;
+   HttpResponse response = {0};
+   if (HttpResponseInit(&response, HTTP_1_1, HttpStatus_OK).status == COT_ERROR) {
+      newResultError("generate_apiPost: RESPONSE IS INVALID.");
+      return sendRedirect("/", clientfd);
+   }
+
+
+   uint16_t* pgt = generatePGT(payload, return_msg);
+   //if (pgt) fprintf(stderr, "PGT SUCCESS\n\n");
+   uint16_t* pcd = generatePCD(payload, pgt, return_msg);
+   //if (pcd) fprintf(stderr, "PCD SUCCESS\n\n");
+   uint16_t* myg = generateMYG(payload, pcd, return_msg);
+   //if (myg) fprintf(stderr, "MYG SUCCESS\n\n");
+
+   if (!pgt || !myg || !pcd) {
+      //we return our default html here.
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, return_msg);
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
+   }
+
+   //Get our filename
+   filename = strMapGet(payload, "filename_input");
+   if (!filename || strlen(filename) == 0) {
+      filename = (char*) calloc(strlen("IVgift") + 1, sizeof(char));
+      if (!filename) {
+         dataVectorPushString(&vector, "<script>alert('");
+         dataVectorPushString(&vector, "Could not allocate enough memory for file name");
+         dataVectorPushString(&vector, "');</script>");
+         goto end;
+      }
+      strcpy(filename, "IVgift");
+      new_filename = true;
+   }
+   else if (strlen(filename) > 50) { //hardcoded limit
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "File name is too big");
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
+   }
+
+   char zip_filename[100];
+   memset(zip_filename, 0, sizeof(zip_filename));
 
    //With our buffers, we write them to a zip file.
    //We can do this with libzip (zip.h)
@@ -614,7 +686,11 @@ NewRouteFunction(generate_apiPost) {
 
    zip_source_t* wc_source = zip_source_buffer_create(NULL, 0, 0, &zip_err);
    if (!wc_source) {
-      fprintf(stderr, "WC_SOURCE FAILED: %s\n", zip_error_strerror(&zip_err));
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: ");
+      dataVectorPushString(&vector, zip_error_strerror(&zip_err));
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
 
    //By default, libzip will free data automatically for us at times.
@@ -625,56 +701,94 @@ NewRouteFunction(generate_apiPost) {
    //TRUNCATE means "even if this already exists, handle it like its brand new and empty".
    zip_t* wc_zip = zip_open_from_source(wc_source, ZIP_TRUNCATE, &zip_err);
    if (!wc_zip) {
-      fprintf(stderr, "WC_ZIP FAILED: %s\n", zip_error_strerror(&zip_err));
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: ");
+      dataVectorPushString(&vector, zip_error_strerror(&zip_err));
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
 
 
    //Convert files into zip sources, and attach them to the main zip source.
-   zip_source_t* pgt_source = zip_source_buffer(wc_zip, pgt, pgt_size, 0);
+   zip_source_t* pgt_source = zip_source_buffer(wc_zip, pgt, pgt_size, 1);
    if (!pgt_source) {
-      fprintf(stderr, "PGT_SOURCE FAILED: %s\n", zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: ");
+      dataVectorPushString(&vector, zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
    
-   zip_source_t* pcd_source = zip_source_buffer(wc_zip, pcd, pcd_size, 0);
+   zip_source_t* pcd_source = zip_source_buffer(wc_zip, pcd, pcd_size, 1);
    if (!pcd_source) {
-      fprintf(stderr, "PCD_SOURCE FAILED: %s\n", zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: ");
+      dataVectorPushString(&vector, zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
    
-   zip_source_t* myg_source = zip_source_buffer(wc_zip, myg, myg_size, 0);
+   zip_source_t* myg_source = zip_source_buffer(wc_zip, myg, myg_size, 1);
    if (!myg_source) {
-      fprintf(stderr, "MYG_SOURCE FAILED: %s\n", zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: ");
+      dataVectorPushString(&vector, zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
 
 
    //Add our files to the file interface
    //Add HTML for writing a name for these files. otherwise, use 'IVgift'.
-   
-   zip_status = zip_file_add(wc_zip, "IVgift.pgt", pgt_source, ZIP_FL_OVERWRITE);
+
+   sprintf(zip_filename, "%s.pgt", filename);
+   zip_status = zip_file_add(wc_zip, zip_filename, pgt_source, ZIP_FL_OVERWRITE);
    if (zip_status < 0) {
-      fprintf(stderr, "PGT_ADD FAILED: %s\n", zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: ");
+      dataVectorPushString(&vector, zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
    
-   zip_status = zip_file_add(wc_zip, "IVgift.pcd", pcd_source, ZIP_FL_OVERWRITE);
+   sprintf(zip_filename, "%s.pcd", filename);
+   zip_status = zip_file_add(wc_zip, zip_filename, pcd_source, ZIP_FL_OVERWRITE);
    if (zip_status < 0) {
-      fprintf(stderr, "PCD_ADD FAILED: %s\n", zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: ");
+      dataVectorPushString(&vector, zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
 
-   zip_status = zip_file_add(wc_zip, "IVgift.myg", myg_source, ZIP_FL_OVERWRITE);
+   sprintf(zip_filename, "%s.myg", filename);
+   zip_status = zip_file_add(wc_zip, zip_filename, myg_source, ZIP_FL_OVERWRITE);
    if (zip_status < 0) {
-      fprintf(stderr, "MYG_ADD FAILED: %s\n", zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: ");
+      dataVectorPushString(&vector, zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
 
    //Done with the interface, so close it
    zip_status = zip_close(wc_zip);
    if (zip_status < 0) {
-      fprintf(stderr, "ZIP_CLOSE FAILED: %s\n", zip_strerror(wc_zip));
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: ");
+      dataVectorPushString(&vector, "close failed");
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
 
    //With our total source, we read it into a buffer and get the size.
    zip_stat_t wc_stats = {0};
    zip_status = zip_source_stat(wc_source, &wc_stats); //Stores stats about the zip, including size.
    if (zip_status < 0) {
-      fprintf(stderr, "ZIP_SOURCE_STAT FAILED: %s\n", "idk");
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: Could not get statistics");
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
    
    size_t wc_zip_size = wc_stats.size;
@@ -683,41 +797,51 @@ NewRouteFunction(generate_apiPost) {
    //returns -1 on failure
    zip_status =  zip_source_open(wc_source);
    if (zip_status < 0) {
-      fprintf(stderr, "ZIP_SOURCE_OPEN FAILED: %s\n", "idk");
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: Could not open main source");
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
 
    if (zip_source_seek(wc_source, 0, SEEK_SET) < 0) {
-      fprintf(stderr, "ZIP_SOURCE_SEEK FAILED\n");
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: Could not set read pointer to 0 on source");
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
    
-   // //returns -1 on error, and 0 on finish read
-
-   uint8_t* wc_zip_data = (uint8_t*) malloc(wc_zip_size);
+   wc_zip_data = (uint8_t*) malloc(wc_zip_size);
+   if (!wc_zip_data) {
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: Could not allocate memory for zip data");
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
+   }
 
    int64_t zip_bytes = 0, zip_index = 0; 
    while (zip_index <= (int64_t)wc_zip_size) {
       zip_bytes = zip_source_read(wc_source, &wc_zip_data[zip_index], wc_zip_size - zip_index);
       if (zip_bytes < 0) {
-         fprintf(stderr, "ZIP_SOURCE_READ FAILED: %s\n", "idk");
-         break;
+         dataVectorPushString(&vector, "<script>alert('");
+         dataVectorPushString(&vector, "Zip failed: Could not read properly");
+         dataVectorPushString(&vector, "');</script>");
+         goto end;
       }
 
       zip_index += zip_bytes;
-      fprintf(stderr, "ZIP_SOURCE_READ INDEX: %li\n", zip_index);
+      //fprintf(stderr, "ZIP_SOURCE_READ INDEX: %li\n", zip_index);
       if (zip_bytes == 0) {
-         fprintf(stderr, "ZIP_SOURCE_READ SUCCESS\n");
+         //fprintf(stderr, "ZIP_SOURCE_READ SUCCESS\n");
          break;
       }
    }
-   
-   // zip_status = zip_source_read(wc_source, wc_zip_data, wc_zip_size);
-   // if (zip_status < 0) {
-   //    fprintf(stderr, "ZIP_SOURCE_READ FAILED: %s\n", "idk");
-   // }
 
    zip_status = zip_source_close(wc_source);
    if (zip_status < 0) {
-      fprintf(stderr, "ZIP_SOURCE_CLOSE FAILED: %s\n", "idk");
+      dataVectorPushString(&vector, "<script>alert('");
+      dataVectorPushString(&vector, "Zip failed: Could not close source properly");
+      dataVectorPushString(&vector, "');</script>");
+      goto end;
    }
 
    //done with source so free it.
@@ -729,22 +853,19 @@ NewRouteFunction(generate_apiPost) {
 
    //wc_zip_data has our zip file now.
    //encode it in base64, and send it off.
-   char* wc_data_encoded = base64_encode_binary(wc_zip_data, wc_zip_size);
+   wc_data_encoded = base64_encode_binary(wc_zip_data, wc_zip_size);
 
    fprintf(stderr, "ENCODED WC:\n\n%s\n\n", wc_data_encoded);
 
-   HttpResponse response = {0};
-   if (HttpResponseInit(&response, HTTP_1_1, HttpStatus_OK).status == COT_ERROR) {
-      return sendRedirect("/", clientfd);
-   }
-
    //Build the HTML for the download button to send.
 
-   dataVector vector = dataVectorInit(128);
+   
    //dataVectorPushString(&vector, "<div> Card sent </div><br>\n");
    dataVectorPushString(&vector, "<a href=\"data:application/zip;base64,");
    dataVectorPushString(&vector, wc_data_encoded);
-   dataVectorPushString(&vector, "\" download=\"ivgift_wondercard.zip\">\n");
+   dataVectorPushString(&vector, "\" download=\"");
+   dataVectorPushString(&vector, filename);
+   dataVectorPushString(&vector, "_IVgift.zip\">\n");
 
    //We have to make a sitevar for this
    siteVar* button_vars = siteVarInit("vars", COMPOSITE, 0, NULL);
@@ -758,6 +879,7 @@ NewRouteFunction(generate_apiPost) {
       dataVectorPushString(&vector, button_html);
    }
    else {
+      if (button_html) free(button_html);
       dataVectorPushString(&vector, "<button type=\"button\">Download Card</button>\n");
    }
 
@@ -765,23 +887,31 @@ NewRouteFunction(generate_apiPost) {
 
    if (button_vars) siteVarFree(button_vars);
 
-   
+
+
+   end:
    HttpResponseAddPayload(&response, vector.data, strlen(vector.data));
    char payload_size[100] = {0};
    sprintf(payload_size, "%zu", response.payload_size);
    
    HttpResponseAddOption(&response, "Content-Length", payload_size);
-   HttpResponseAddOption(&response, "Content-Type", "text/plaintext");
+   HttpResponseAddOption(&response, "Content-Type", "text/html");
    HttpResponseAddOption(&response, "Connection", "close");
 
    bool status = sendCustom(response, clientfd);
+
+   fprintf(stderr, "generate_apiPost status is %s\n", status ? "true" : "false");
+
    HttpResponseFree(response);
+   if (new_filename && filename) free(filename);
    if (vector.data) free(vector.data);
-
-
+   if (wc_zip_data) free(wc_zip_data);
+   if (wc_data_encoded) free(wc_data_encoded);
+   // if (pgt) free(pgt);
+   // if (pcd) free(pcd);
+   // if (myg) free(myg);
 
    return status;
-   //return false;
 }
 NewRouteFunction(generate_apiPut) {
    return false;

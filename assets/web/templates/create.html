@@ -3,37 +3,36 @@ Make a separate component for each section.
 -->
 
 <html>
-    <head>
-
-        <!-- HTMX for sprite retrieving -->
-        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" 
-        integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
-        crossorigin="anonymous"></script>
-
-        <!-- Needed stylesheets -->
-        <link rel="stylesheet" href="web/styles/screen_mode.css">
-        <link rel="stylesheet" href="web/styles/type_selection.css">
-        <link rel="stylesheet" href="web/styles/gen4_font_load.css">
-        <link rel="stylesheet" href="web/styles/create.css">
-        
-        <!-- Sprites taken from https://github.com/msikma/pokesprite-spritesheet -->
-        <link rel="stylesheet" href="web/styles/pokesprites/gh-markdown.css">
-        <link rel="stylesheet" href="web/styles/pokesprites/pokesprite-docs.css">
-        <link rel="stylesheet" href="web/styles/pokesprites/pokesprite-pokemon-gen4.css">
-        <link rel="stylesheet" href="web/styles/pokesprites/pokesprite-inventory.css">
-
-    </head>
-
-
-
     <!-- LOGO -->
     <div></div>
     
     <body>
+        
+        <head>
+
+            <!-- HTMX for sprite retrieving -->
+            <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" 
+            integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
+            crossorigin="anonymous"></script>
+
+            <!-- Needed stylesheets -->
+            <link rel="stylesheet" href="web/styles/screen_mode.css">
+            <link rel="stylesheet" href="web/styles/type_selection.css">
+            <link rel="stylesheet" href="web/styles/gen4_font_load.css">
+            <link rel="stylesheet" href="web/styles/create.css">
+            
+            <!-- Sprites taken from https://github.com/msikma/pokesprite-spritesheet -->
+            <link rel="stylesheet" href="web/styles/pokesprites/gh-markdown.css">
+            <link rel="stylesheet" href="web/styles/pokesprites/pokesprite-docs.css">
+            <link rel="stylesheet" href="web/styles/pokesprites/pokesprite-pokemon-gen4.css">
+            <link rel="stylesheet" href="web/styles/pokesprites/pokesprite-inventory.css">
+
+        </head>
+
         <div class="create-layout">
             <!-- Return button -->
             <form action="/" method="GET" style="top: 0; left: 0;">
-                {{INSERT:assets/web/components/button.html;normal="img/return.png",pressed="img/return_pressed.png",width=50,height=50}}
+                {{INSERT:assets/web/components/button.html;normal="img/return.png",pressed="img/return_pressed.png",width=50,height=50,tooltip="Return to home (PROGRESS WILL BE LOST)"}}
             </form>
 
             <div id="wc_editor" class="create-editor">
@@ -58,6 +57,8 @@ Make a separate component for each section.
                 {{INSERT:assets/web/components/create/wc_date.html;server_date=global.server_date,edit_date=global.edit_date}}
                 <br>
                 {{INSERT:assets/web/components/create/game_flags.html;edit_flag_d=global.edit_flag_d,edit_flag_p=global.edit_flag_p,edit_flag_pt=global.edit_flag_pt,edit_flag_hg=global.edit_flag_hg,edit_flag_ss=global.edit_flag_ss}}
+                <br>
+                {{INSERT:assets/web/components/create/wc_filename.html}}
                 <br><br>
             </div>
 
@@ -136,23 +137,22 @@ Make a separate component for each section.
                     style="left: 208; top: -3px;">
                         <!-- <span class="pokesprite pokemon shroomish"></span> -->
                     </div>
-            
                 </div>
-            </div>
 
+                <!-- Submission and View button -->
+                <div class="create-button">
+                    <form
+                        id="view-button" 
+                        hx-post="/api/generate"
+                        hx-include="#wc_editor"
+                        hx-target="#download_view">
+                    {{INSERT:assets/web/components/button.html;normal="img/view.png",pressed="img/view_pressed.png",height=75,width=125}}
+                    </form>
+                    <!-- Download button -->
+                    <div id="download_view"></div>
+                </div>
 
-            <!-- Submission and View button -->
-            <div class="create-button">
-                <form
-                    id="view-button" 
-                    hx-post="/api/generate"
-                    hx-include="#wc_editor"
-                    hx-target="#download_view">
-                {{INSERT:assets/web/components/button.html;normal="img/view.png",pressed="img/view_pressed.png",height=75,width=125}}
-                </form>
-                <!-- Download button -->
-                <div id="download_view"></div>
-            </div>    
+            </div>  
         </div>
     </body>
 

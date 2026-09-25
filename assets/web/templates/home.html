@@ -24,7 +24,7 @@
         {{INSERT:assets/web/components/button.html;normal="img/new.png",pressed="img/new_pressed.png",height=150}}
     </form>
 
-    <form id="edit_form" action="/" method="POST" style="display: flex; justify-content: center;">
+    <form id="edit_form" hx-post="/" hx-target="body" style="display: flex; justify-content: center;">
         <!-- route path for editing -->
         <input type="hidden" name="action" value="switch_edit">
         

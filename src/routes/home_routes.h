@@ -5,7 +5,7 @@
 #define SwapEndian(x) (x >> 8) | (x << 8)
 
 typedef enum GiftType {
-   POKEMON = 0,
+   POKEMON = 1,
    EGG,
    ITEM
 } GiftType;
@@ -314,8 +314,8 @@ WonderCard readPCD(uint16_t* bin) {
 
    index++; //0x0000
 
-   //Wonder card id (reversed)
-   card.wc_id = SwapEndian(bin[index]); index++;
+   //Wonder card id
+   card.wc_id = bin[index]; index++;
 
    //Mystery byte, ignore.
    index++;
@@ -455,6 +455,9 @@ bool prepareWonderCardEdit(int client, char* file, siteVar** global) {
          siteVarCompositeInsertNew(global, "edit_type_item", STRING, 1, (char*[]){"checked"});
          break;
       }
+      default: {
+         return false;
+      }
    }
 
    if (card.type == ITEM) {
@@ -474,6 +477,7 @@ bool prepareWonderCardEdit(int client, char* file, siteVar** global) {
          siteVarCompositeInsertNew(global, "edit_ek4_base64", STRING, 1, (string_cot[]){ek4_encoded});
          free(ek4_encoded);
       }
+      else return false;
    }
 
    if (card.title)       siteVarCompositeInsertNew(global, "edit_title", STRING, 1, (string_cot[]){card.title}      );
@@ -562,11 +566,23 @@ NewRouteFunction(homePost) {
       siteVar* global = siteVarClone(extraData);
       fprintf(stderr, "GLOBAL NAME IS %s\n\n", global->name);
 
-      status = prepareWonderCardEdit(clientfd, file, &global);
+      char* data = NULL;
+      siteVar* variables = NULL;
       HttpResponse response = {0};
       if (HttpResponseInit(&response, HTTP_1_1, HttpStatus_OK).status == COT_ERROR) {
          // siteVarFree(global);
+         status = sendRedirect("/", clientfd);
+         siteVarFree(global);
          goto end;
+      }
+
+      bool wc_status = prepareWonderCardEdit(clientfd, file, &global);
+      if (!wc_status) {
+         //Something bad happened, so return an alert.
+         data = (char*) calloc(256, sizeof(char));
+         //snprintf(data, 200, "<script>alert('Wonder Card data could not be processed');</script>");
+         snprintf(data, 256, "<script>alert('Wonder Card data could not be processed'); window.location.href='/';</script>");
+         goto switch_edit_end;
       }
 
       //get the openHTML data.
@@ -576,23 +592,27 @@ NewRouteFunction(homePost) {
       //    fprintf(stderr, "special chars is valid, %s\n\n", special_chars->name);
       // }
       
-      siteVar* variables = siteVarInit("variables", COMPOSITE, 0, NULL);
+      variables = siteVarInit("variables", COMPOSITE, 0, NULL);
       siteVarCompositeInsert(&variables, global);
       
-      char* data = NULL;
       if (openHTML(&data, "assets/web/templates/create.html", variables).status == COT_ERROR) {
          HttpResponseFree(response);
          goto end;
       }
 
+      switch_edit_end:
       HttpResponseAddPayload(&response, data, strlen(data));
       
       HttpResponseAddOption(&response, "Content-Type", "text/html; charset=UTF-8");
       HttpResponseAddOption(&response, "Connection", "close");
-      HttpResponseAddOption(&response, "HX-Push-Url", "/create");
+      
+      if (wc_status) HttpResponseAddOption(&response, "HX-Push-Url", "/create");
 
       // status = sendRedirect("/create", clientfd);
       status = sendCustom(response, clientfd);
+
+      //if (!wc_status) sendRedirect("/", clientfd);
+
       HttpResponseFree(response);
       if (data) free(data);
       if (status) fprintf(stderr, "sendCustom worked\n");
