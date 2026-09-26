@@ -78,7 +78,10 @@ body {
 }
 
 .create-button {
+    transform: scale(1);
+    transform-origin: top right;
     position: fixed;
-    top: 0;
-    right: 0;
+    top: 20px;
+    right: 20px;
 }
+

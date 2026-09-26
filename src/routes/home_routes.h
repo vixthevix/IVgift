@@ -468,8 +468,8 @@ bool prepareWonderCardEdit(int client, char* file, siteVar** global) {
    else {
       if (card.pokemon_OT_flag) siteVarCompositeInsertNew(global, "edit_OT_flag", STRING, 1, (char*[]){"checked"});
       
-      if (card.ek4) siteVarCompositeInsertNew(global, "edit_ek4_status", STRING, 1, (string_cot[]){"Data is valid!"});
-      else siteVarCompositeInsertNew(global, "edit_ek4_status", STRING, 1, (string_cot[]){"Data is not valid"});
+      if (card.ek4) siteVarCompositeInsertNew(global, "edit_ek4_status", STRING, 1, (string_cot[]){"<div style=\"color: green;\">Data is valid!</div>"});
+      else siteVarCompositeInsertNew(global, "edit_ek4_status", STRING, 1, (string_cot[]){"<div style=\"color: red;\">Data is not valid</div>"});
       
       //we need to base64 encode our payload.
       char* ek4_encoded = base64_encode_binary(card.ek4, 236);
