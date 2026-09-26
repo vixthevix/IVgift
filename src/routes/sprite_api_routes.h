@@ -29,11 +29,19 @@ HttpResponse sprite_api_build(siteVar* var, const int list_type) {
 
    char payload[256] = {0};
 
+   //We need to also transform the pokemon and item names to have capital letters at the start.
+
+
+
    if (list_type == SPRITE_API_ITEM) {
+      char item_name[100] = {0};
+      snprintf(item_name, 100, items[index]);
+      if ('a' <= item_name[0] && item_name[0] <= 'z')
+         item_name[0] = (item_name[0] - 32);
       snprintf(payload, 256, 
          "<span class=\"pokesprite %s\"></span>\n"
          "%s", 
-         items2[index], items[index]);
+         items2[index], item_name);
    }
    else if (list_type == SPRITE_API_POKEMON) {
       if (index == 0) {
@@ -43,10 +51,14 @@ HttpResponse sprite_api_build(siteVar* var, const int list_type) {
             pokemons[index]);
       }
       else {
+         char pokemon_name[100] = {0};
+         snprintf(pokemon_name, 100, pokemons[index]);
+         if ('a' <= pokemon_name[0] && pokemon_name[0] <= 'z')
+            pokemon_name[0] = (pokemon_name[0] - 32);
          snprintf(payload, 256, 
             "<span class=\"pokesprite pokemon %s\"></span>\n"
             "%s", 
-            pokemons[index], pokemons[index]);
+            pokemons[index], pokemon_name);
       }
    }
    else {
