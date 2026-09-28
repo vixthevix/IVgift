@@ -1,6 +1,6 @@
 /*
-IVgift backend.
-Linux program for creating and editing generation IV Pokemon Mystery Gifts.
+Legacy code for studying and creating a custom mystery gift.
+UNUSED IN IVGIFT.
 
 Visit https://github.com/vixthevix/IVgift for more info.
 */

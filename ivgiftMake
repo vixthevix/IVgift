@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 #we are compiling ivgift and ivgiftback
 
 mkdir bin
