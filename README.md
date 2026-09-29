@@ -30,12 +30,12 @@ IVgift uses the cottage framework for server hosting.
 To include it, run:
 
 ```
-#In the IVgift folder...
+# In the IVgift folder...
 
 cd src
 git clone https://github.com/vixthevix/cottage.git
 
-#cottage is composed of header files, so no further building here.
+# cottage is composed of header files, so no further building here.
 ```
 
 **Building IVgift**
